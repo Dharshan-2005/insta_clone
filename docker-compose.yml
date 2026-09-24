@@ -1,270 +1,211 @@
-services:
-  # ─── Infrastructure ────────────────────────────────────────────────
+name: instagram-clone
 
+x-node-service: &node-service
+  restart: unless-stopped
+  init: true
+
+x-healthcheck: &healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 20s
+
+x-environment:
+  jwt-secret: &jwt-secret ${JWT_SECRET:-local-development-secret-change-me}
+  seed-demo-data: &seed-demo-data ${SEED_DEMO_DATA:-true}
+  kafka-brokers: &kafka-brokers kafka:9092
+
+services:
   postgres:
     image: postgres:16-alpine
-    container_name: ig-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: instagram
-      POSTGRES_PASSWORD: instagram_secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-instagram}
       POSTGRES_DB: instagram
     ports:
-      - '5433:5432'
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U instagram']
+      test: ["CMD-SHELL", "pg_isready -U instagram -d instagram"]
       interval: 5s
       timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: ig-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-    ports:
-      - '6380:6379'
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: ig-zookeeper
-    restart: unless-stopped
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - '2181:2181'
-    volumes:
-      - zookeeper_data:/var/lib/zookeeper/data
+      retries: 20
 
   kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: ig-kafka
+    image: apache/kafka:3.8.1
     restart: unless-stopped
-    depends_on:
-      zookeeper:
-        condition: service_started
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 3
-      KAFKA_LOG_RETENTION_HOURS: 168
-    ports:
-      - '29092:29092'
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: ig-kafka-ui
-    restart: unless-stopped
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_CLUSTERS_0_NAME: instagram
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-    ports:
-      - '8080:8080'
-
-  nginx:
-    image: nginx:alpine
-    container_name: ig-nginx
-    restart: unless-stopped
-    ports:
-      - '80:80'
-    volumes:
-      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./uploads:/usr/share/nginx/media:ro
-    depends_on:
-      - api-gateway
-      - frontend
-      - notification-service
-
-  # ─── Application Services ──────────────────────────────────────────
-
-  auth-service:
-    build:
-      context: .
-      dockerfile: infrastructure/docker/auth-service.Dockerfile
-    container_name: ig-auth-service
-    restart: unless-stopped
-    environment:
-      DATABASE_URL: postgresql://instagram:instagram_secret@postgres:5432/auth_db
-      JWT_SECRET: super_secret_jwt_key_change_in_production
-      JWT_REFRESH_SECRET: super_secret_refresh_key_change_in_production
-      KAFKA_BROKERS: kafka:9092
-      REDIS_URL: redis://redis:6379
-      PORT: 4001
-      NODE_ENV: development
-      USER_SERVICE_URL: http://user-service:4002
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-    ports:
-      - '4001:4001'
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-      redis:
-        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 15s
 
   user-service:
+    <<: *node-service
     build:
-      context: .
-      dockerfile: infrastructure/docker/user-service.Dockerfile
-    container_name: ig-user-service
-    restart: unless-stopped
+      context: ./services/user-service
+      dockerfile: ../Dockerfile
     environment:
-      DATABASE_URL: postgresql://instagram:instagram_secret@postgres:5432/user_db
-      KAFKA_BROKERS: kafka:9092
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: super_secret_jwt_key_change_in_production
       PORT: 4002
-      NODE_ENV: development
-    ports:
-      - '4002:4002'
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-
-  post-service:
-    build:
-      context: .
-      dockerfile: infrastructure/docker/post-service.Dockerfile
-    container_name: ig-post-service
-    restart: unless-stopped
-    environment:
-      DATABASE_URL: postgresql://instagram:instagram_secret@postgres:5432/post_db
-      KAFKA_BROKERS: kafka:9092
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: super_secret_jwt_key_change_in_production
+      DATABASE_URL: postgresql://instagram:${POSTGRES_PASSWORD:-instagram}@postgres:5432/user_db
+      KAFKA_BROKERS: *kafka-brokers
       UPLOAD_DIR: /app/uploads
-      PORT: 4003
-      NODE_ENV: development
-    ports:
-      - '4003:4003'
+      SEED_DEMO_DATA: *seed-demo-data
     volumes:
       - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:4002/health"]
 
-  feed-service:
+  auth-service:
+    <<: *node-service
     build:
-      context: .
-      dockerfile: infrastructure/docker/feed-service.Dockerfile
-    container_name: ig-feed-service
-    restart: unless-stopped
+      context: ./services/auth-service
+      dockerfile: ../Dockerfile
     environment:
-      DATABASE_URL: postgresql://instagram:instagram_secret@postgres:5432/feed_db
-      KAFKA_BROKERS: kafka:9092
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: super_secret_jwt_key_change_in_production
+      PORT: 4001
+      DATABASE_URL: postgresql://instagram:${POSTGRES_PASSWORD:-instagram}@postgres:5432/auth_db
+      JWT_SECRET: *jwt-secret
       USER_SERVICE_URL: http://user-service:4002
-      POST_SERVICE_URL: http://post-service:4003
-      PORT: 4004
-      NODE_ENV: development
-    ports:
-      - '4004:4004'
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      SEED_DEMO_DATA: *seed-demo-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:4001/health"]
+
+  post-service:
+    <<: *node-service
+    build:
+      context: ./services/post-service
+      dockerfile: ../Dockerfile
+    environment:
+      PORT: 4003
+      DATABASE_URL: postgresql://instagram:${POSTGRES_PASSWORD:-instagram}@postgres:5432/post_db
+      KAFKA_BROKERS: *kafka-brokers
+      USER_SERVICE_URL: http://user-service:4002
+      UPLOAD_DIR: /app/uploads
+      SEED_DEMO_DATA: *seed-demo-data
+    volumes:
+      - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
-      redis:
         condition: service_healthy
+      user-service:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:4003/health"]
 
   notification-service:
+    <<: *node-service
     build:
-      context: .
-      dockerfile: infrastructure/docker/notification-service.Dockerfile
-    container_name: ig-notification-service
-    restart: unless-stopped
+      context: ./services/notification-service
+      dockerfile: ../Dockerfile
     environment:
-      DATABASE_URL: postgresql://instagram:instagram_secret@postgres:5432/notification_db
-      KAFKA_BROKERS: kafka:9092
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: super_secret_jwt_key_change_in_production
-      USER_SERVICE_URL: http://user-service:4002
       PORT: 4005
-      NODE_ENV: development
-    ports:
-      - '4005:4005'
+      DATABASE_URL: postgresql://instagram:${POSTGRES_PASSWORD:-instagram}@postgres:5432/notification_db
+      JWT_SECRET: *jwt-secret
+      KAFKA_BROKERS: *kafka-brokers
+      USER_SERVICE_URL: http://user-service:4002
+      UPLOAD_DIR: /app/uploads
+      SEED_DEMO_DATA: *seed-demo-data
+    volumes:
+      - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:4005/health"]
 
   api-gateway:
+    <<: *node-service
     build:
-      context: .
-      dockerfile: infrastructure/docker/api-gateway.Dockerfile
-    container_name: ig-api-gateway
-    restart: unless-stopped
+      context: ./services/api-gateway
+      dockerfile: ../Dockerfile
     environment:
+      PORT: 3051
+      JWT_SECRET: *jwt-secret
       AUTH_SERVICE_URL: http://auth-service:4001
       USER_SERVICE_URL: http://user-service:4002
       POST_SERVICE_URL: http://post-service:4003
-      FEED_SERVICE_URL: http://feed-service:4004
       NOTIFICATION_SERVICE_URL: http://notification-service:4005
-      JWT_SECRET: super_secret_jwt_key_change_in_production
-      REDIS_URL: redis://redis:6379
-      PORT: 3051
-      NODE_ENV: development
-    ports:
-      - '3051:3051'
     depends_on:
-      - auth-service
-      - user-service
-      - post-service
-      - feed-service
-      - notification-service
-      - redis
+      auth-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      post-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:3051/health"]
 
   frontend:
-    build:
-      context: .
-      dockerfile: infrastructure/docker/frontend.Dockerfile
-    container_name: ig-frontend
-    restart: unless-stopped
+    <<: *node-service
+    build: ./frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://api-gateway:3051/api
-      NEXT_PUBLIC_WS_URL: ws://notification-service:4005
-      NEXT_PUBLIC_MEDIA_URL: http://localhost/media
-      AUTH_SECRET: nextauth_secret_change_in_production
-      AUTH_TRUST_HOST: "true"
-      NEXTAUTH_URL: http://localhost:3050
-      PORT: 3050
-      NODE_ENV: production
-    ports:
-      - '3050:3050'
+      API_URL: http://api-gateway:3051
     depends_on:
-      - api-gateway
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:3000/auth/login"]
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./uploads:/usr/share/nginx/media:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      api-gateway:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1/nginx-health"]
 
 volumes:
   postgres_data:
-  redis_data:
-  zookeeper_data:
-  kafka_data:
