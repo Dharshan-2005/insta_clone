@@ -1,71 +1,58 @@
 'use client';
 
-import React, { useState } from 'react';
-import { followProfile, unfollowProfile } from '@/actions';
-import { Follower } from '@/types';
-import { UserMinus, UserPlus, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { api } from '@/lib/api';
 
-export default function FollowButton({
-  profileIdToFollow,
-  ourFollow = null,
-}: {
-  profileIdToFollow: string;
-  ourFollow: Follower | null;
-}) {
+type Props = {
+  userId: string;
+  initialFollowing: boolean;
+  compact?: boolean;
+};
+
+export default function FollowButton({ userId, initialFollowing, compact = false }: Props) {
   const router = useRouter();
-  const [isFollowed, setIsFollowed] = useState<boolean>(Boolean(ourFollow));
-  const [loading, setLoading] = useState(false);
+  const [following, setFollowing] = useState(initialFollowing);
+  const [pending, setPending] = useState(false);
 
-  const handleToggle = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-
-    const previousState = isFollowed;
-    const newState = !previousState;
-    setIsFollowed(newState);
-    setLoading(true);
-
+  const toggle = async () => {
+    const next = !following;
+    setPending(true);
+    setFollowing(next);
     try {
-      if (previousState) {
-        await unfollowProfile(profileIdToFollow);
-      } else {
-        await followProfile(profileIdToFollow);
-      }
+      if (next) await api.post(`/users/${userId}/follow`);
+      else await api.delete(`/users/${userId}/follow`);
       router.refresh();
-    } catch (err) {
-      // Rollback on error
-      setIsFollowed(previousState);
+    } catch {
+      setFollowing(!next);
     } finally {
-      setLoading(false);
+      setPending(false);
     }
   };
 
-  return (
-    <form onSubmit={handleToggle} className="flex-1 w-full flex">
+  if (compact) {
+    return (
       <button
-        type="submit"
-        disabled={loading}
-        className={`flex-1 py-2 px-6 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 select-none ${
-          isFollowed
-            ? 'bg-[#262626] hover:bg-[#333333] text-white border border-neutral-700'
-            : 'bg-sky-500 hover:bg-sky-400 text-white shadow-md active:scale-[0.98]'
-        }`}
+        type="button"
+        onClick={toggle}
+        disabled={pending}
+        className={`text-xs font-semibold ${following ? 'text-neutral-300' : 'text-sky-400 hover:text-sky-300'}`}
       >
-        {loading ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : isFollowed ? (
-          <>
-            <UserMinus className="size-4" />
-            <span>Following</span>
-          </>
-        ) : (
-          <>
-            <UserPlus className="size-4" />
-            <span>Follow</span>
-          </>
-        )}
+        {following ? 'Following' : 'Follow'}
       </button>
-    </form>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      disabled={pending}
+      className={`rounded-lg px-5 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
+        following ? 'bg-neutral-800 hover:bg-neutral-700' : 'bg-sky-500 hover:bg-sky-600'
+      }`}
+    >
+      {following ? 'Following' : 'Follow'}
+    </button>
   );
 }

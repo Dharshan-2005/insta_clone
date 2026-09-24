@@ -1,13 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-black text-neutral-100 antialiased;
   }
 }
 
-:root{
-  --red: rgb(207, 33, 66);
-  --orange: rgb(230, 173, 77);
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }

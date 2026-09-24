@@ -1,36 +1,29 @@
 {
-  "name": "instagram-clone-frontend",
-  "version": "0.1.0",
+  "name": "@instagram/frontend",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3050",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3050",
-    "lint": "next lint"
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/themes": "^3.1.4",
-    "axios": "^1.7.7",
-    "date-fns": "^4.1.0",
-    "lucide-react": "^0.453.0",
-    "next": "14.2.14",
-    "next-auth": "^5.0.0-beta.22",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-intersection-observer": "^9.13.1",
-    "react-masonry-css": "^1.0.16",
-    "react-spinners": "^0.14.1",
-    "socket.io-client": "^4.8.0",
-    "zustand": "^4.5.5"
+    "lucide-react": "0.453.0",
+    "next": "14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "socket.io-client": "4.8.3"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.14",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "@types/node": "20.19.43",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.35",
+    "postcss": "8.5.6",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3"
   }
 }

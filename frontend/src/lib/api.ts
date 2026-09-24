@@ -1,107 +1,42 @@
-import { auth } from '@/auth';
-
-export async function getAuthHeaders(): Promise<Record<string, string>> {
-  try {
-    const session = await auth();
-    const token = (session as any)?.backendToken;
-    if (token) {
-      return { Authorization: `Bearer ${token}` };
-    }
-  } catch {}
-
-  try {
-    const { cookies } = await import('next/headers');
-    const cookieStore = cookies();
-    const token = cookieStore.get('access_token')?.value;
-    if (token) {
-      return { Authorization: `Bearer ${token}` };
-    }
-  } catch {}
-
-  return {};
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
 }
 
-export async function apiFetch<T = any>(
-  endpoint: string,
-  options: RequestInit = {},
-): Promise<T> {
-  const headers = await getAuthHeaders();
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+const FALLBACK_MESSAGES: Record<number, string> = {
+  413: 'That file is too large',
+  429: 'Too many attempts. Please wait a moment and try again',
+};
 
-  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
-  const defaultHeaders: Record<string, string> = isFormData ? {} : { 'Content-Type': 'application/json' };
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const isForm = body instanceof FormData;
+  const res = await fetch(`/api${path}`, {
+    method,
+    headers: body !== undefined && !isForm ? { 'Content-Type': 'application/json' } : undefined,
+    body: isForm ? body : body === undefined ? undefined : JSON.stringify(body),
+  });
 
-  if (cleanEndpoint.startsWith('http')) {
-    const res = await fetch(cleanEndpoint, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        ...defaultHeaders,
-        ...headers,
-        ...(options.headers || {}),
-      },
-      cache: options.cache || 'no-store',
-    });
-    const json = await res.json();
-    return json?.data !== undefined ? json.data : json;
+  if (res.status === 401 && !path.startsWith('/auth/')) {
+    window.location.assign('/auth/login');
   }
 
-  // Server vs Client base URLs
-  const isServer = typeof window === 'undefined';
-  const candidates: string[] = [];
-
-  if (isServer) {
-    if (process.env.INTERNAL_GATEWAY_URL) candidates.push(process.env.INTERNAL_GATEWAY_URL);
-    if (process.env.NEXT_PUBLIC_GATEWAY_URL) candidates.push(process.env.NEXT_PUBLIC_GATEWAY_URL);
-    if (process.env.NEXT_PUBLIC_API_URL) candidates.push(process.env.NEXT_PUBLIC_API_URL);
-
-    // Prefer Docker service name inside container, localhost outside
-    if (process.env.NODE_ENV === 'production') {
-      candidates.push('http://api-gateway:3051/api', 'http://localhost:3051/api');
-    } else {
-      candidates.push('http://localhost:3051/api', 'http://api-gateway:3051/api');
-    }
-  } else {
-    candidates.push('/api/gateway');
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) {
+    const message = Array.isArray(data?.message) ? data.message[0] : data?.message;
+    throw new ApiError(message ?? FALLBACK_MESSAGES[res.status] ?? 'Something went wrong', res.status);
   }
-
-  let lastError: any = null;
-  for (const base of candidates) {
-    const cleanBase = base.replace(/\/+$/, '');
-    const url = `${cleanBase}${cleanEndpoint}`;
-    try {
-      const res = await fetch(url, {
-        ...options,
-        credentials: 'include',
-        headers: {
-          ...defaultHeaders,
-          ...headers,
-          ...(options.headers || {}),
-        },
-        cache: options.cache || 'no-store',
-      });
-
-      if (!res.ok) {
-        let errorDetail = '';
-        try {
-          const errJson = await res.json();
-          errorDetail = errJson.message || JSON.stringify(errJson);
-        } catch {
-          errorDetail = await res.text();
-        }
-        throw new Error(`API error [${res.status}] ${cleanEndpoint}: ${errorDetail}`);
-      }
-
-      const json = await res.json();
-      return json?.data !== undefined ? json.data : json;
-    } catch (err: any) {
-      lastError = err;
-      continue;
-    }
-  }
-
-  throw lastError || new Error(`Failed to fetch ${cleanEndpoint}`);
+  return data as T;
 }
 
-export * from './api/index';
+export const api = {
+  get: <T>(path: string) => request<T>('GET', path),
+  post: <T = void>(path: string, body?: unknown) => request<T>('POST', path, body),
+  patch: <T>(path: string, body: unknown) => request<T>('PATCH', path, body),
+  delete: (path: string) => request<void>('DELETE', path),
+};
 
+export const errorMessage = (err: unknown) => (err instanceof Error ? err.message : 'Something went wrong');

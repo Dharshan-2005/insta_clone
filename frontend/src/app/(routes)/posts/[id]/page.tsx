@@ -1,25 +1,13 @@
-import { getSinglePostData } from "@/actions";
-import SinglePostContent from "@/components/SinglePostContent";
-import { notFound } from "next/navigation";
+import PostDetail from '@/components/PostDetail';
+import { serverApi } from '@/lib/server-api';
+import type { PostDetail as PostDetailType } from '@/lib/types';
 
-export default async function SinglePostPage({ params }: { params: { id: string } }) {
-  try {
-    const {
-      post, authorProfile, comments,
-      commentsAuthors, myLike, myBookmark,
-    } = await getSinglePostData(params.id);
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const post = await serverApi<PostDetailType>(`/posts/${encodeURIComponent(params.id)}`);
 
-    return (
-      <SinglePostContent
-        post={post}
-        authorProfile={authorProfile}
-        comments={comments}
-        commentsAuthors={commentsAuthors}
-        myLike={myLike}
-        myBookmark={myBookmark}
-      />
-    );
-  } catch {
-    notFound();
-  }
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <PostDetail post={post} />
+    </div>
+  );
 }

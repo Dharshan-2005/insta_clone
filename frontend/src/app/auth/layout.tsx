@@ -1,28 +1,15 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "../globals.css";
+import Logo from '@/components/Logo';
 
-const geistSans = localFont({
-  src: "../fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-
-export const metadata: Metadata = {
-  title: "Instagram – Sign in or create an account",
-  description: "Sign in to Instagram to share photos and videos with friends, family and people you know.",
-};
-
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
+    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <Logo size={48} />
+          <h1 className="text-3xl font-semibold tracking-tight">Instagram</h1>
+        </div>
         {children}
-      </body>
-    </html>
+      </div>
+    </main>
   );
 }

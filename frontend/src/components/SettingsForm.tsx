@@ -1,244 +1,131 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { updateProfile } from '@/actions';
-import { Profile } from '@/types';
-import { getMediaUrl } from '@/lib/api/client';
-import { Camera, Check, Loader2, Sparkles, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { api, errorMessage } from '@/lib/api';
+import type { Profile } from '@/lib/types';
+import Avatar from './Avatar';
 
-export default function SettingsForm({
-  profile,
-}: {
-  profile: Profile | null;
-}) {
+type Status = { type: 'success' | 'error'; message: string } | null;
+
+const inputClass =
+  'w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm outline-none focus:border-neutral-600';
+
+export default function SettingsForm({ profile }: { profile: Profile }) {
   const router = useRouter();
-  const fileInRef = useRef<HTMLInputElement>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string>(profile?.avatar || '');
-  const [username, setUsername] = useState(profile?.username || '');
-  const [name, setName] = useState(profile?.name || '');
-  const [subtitle, setSubtitle] = useState(profile?.subtitle || '');
-  const [bio, setBio] = useState(profile?.bio || '');
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [avatar, setAvatar] = useState(profile.avatar);
+  const [form, setForm] = useState({
+    name: profile.name ?? '',
+    username: profile.username,
+    subtitle: profile.subtitle ?? '',
+    bio: profile.bio ?? '',
+  });
   const [saving, setSaving] = useState(false);
-  const [savedSuccess, setSavedSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState<Status>(null);
 
-  // Handle image upload with FileReader for instant client preview and data URL storage
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (!selectedFile) return;
+  const update = (field: keyof typeof form) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((current) => ({ ...current, [field]: event.target.value }));
 
-    if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select an image file (PNG, JPG, or WebP).');
-      return;
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    setStatus(null);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const updated = await api.post<Profile>('/users/me/avatar', body);
+      setAvatar(updated.avatar);
+      router.refresh();
+    } catch (err) {
+      setStatus({ type: 'error', message: errorMessage(err) });
+    } finally {
+      setUploading(false);
     }
-
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      setError('Image must be under 5MB.');
-      return;
-    }
-
-    setError(null);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result as string;
-      if (dataUrl) {
-        setAvatarUrl(dataUrl);
-        setSelectedFile(selectedFile);
-      }
-    };
-    reader.readAsDataURL(selectedFile);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const save = async (event: React.FormEvent) => {
+    event.preventDefault();
     setSaving(true);
-    setError(null);
-    setSavedSuccess(false);
-
+    setStatus(null);
     try {
-      let finalAvatar = avatarUrl;
-
-      // If user selected a new image file, upload it directly first
-      if (selectedFile) {
-        const uploadForm = new FormData();
-        uploadForm.append('file', selectedFile);
-        const upRes = await fetch('/api/upload/avatar', {
-          method: 'POST',
-          body: uploadForm,
-        });
-        const upData = await upRes.json();
-        if (!upRes.ok || !upData.success) {
-          throw new Error(upData.message || 'Failed to upload profile photo');
-        }
-        finalAvatar = upData.url;
-        setAvatarUrl(upData.url);
-      }
-
-      const formData = new FormData();
-      formData.set('username', username.trim().toLowerCase().replace(/\s+/g, '_'));
-      formData.set('name', name.trim());
-      formData.set('subtitle', subtitle.trim());
-      formData.set('bio', bio.trim());
-      formData.set('avatar', finalAvatar || '');
-
-      await updateProfile(formData);
-      setSavedSuccess(true);
-      setTimeout(() => {
-        router.push('/profile');
-        router.refresh();
-      }, 700);
-    } catch (err: any) {
-      setError(err?.message || 'Failed to update profile. Please try again.');
+      const updated = await api.patch<Profile>('/users/me', form);
+      setForm((current) => ({ ...current, username: updated.username }));
+      setStatus({ type: 'success', message: 'Profile saved' });
+      router.refresh();
+    } catch (err) {
+      setStatus({ type: 'error', message: errorMessage(err) });
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full text-white">
-      {/* Avatar Change Header */}
-      <div className="flex items-center gap-5 p-4 rounded-2xl bg-white/[0.03] border border-neutral-800">
-        <div className="relative group cursor-pointer" onClick={() => fileInRef.current?.click()}>
-          <div className="size-20 rounded-full overflow-hidden border-2 border-neutral-700 bg-neutral-900 flex items-center justify-center">
-            {avatarUrl ? (
-              <img
-                src={getMediaUrl(avatarUrl)}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center font-bold text-2xl text-white">
-                {name ? name[0]?.toUpperCase() : username ? username[0]?.toUpperCase() : <User className="size-8" />}
-              </div>
-            )}
-          </div>
-          <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Camera className="size-6 text-white" />
-          </div>
+    <form onSubmit={save} className="flex flex-col gap-5">
+      <div className="flex items-center gap-4 rounded-xl bg-neutral-900 p-4">
+        <Avatar user={{ username: form.username || profile.username, avatar }} size={56} />
+        <div className="flex-1 text-sm">
+          <p className="font-semibold">{profile.username}</p>
+          <p className="text-neutral-400">{profile.name}</p>
         </div>
-
-        <div className="flex flex-col gap-1.5">
-          <span className="font-semibold text-sm text-white">
-            @{username || 'username'}
-          </span>
-          <div className="flex items-center gap-2">
-            <input
-              type="file"
-              ref={fileInRef}
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            <button
-              type="button"
-              onClick={() => fileInRef.current?.click()}
-              className="text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors"
-            >
-              Change profile photo
-            </button>
-            {avatarUrl && (
-              <>
-                <span className="text-neutral-600 text-xs">•</span>
-                <button
-                  type="button"
-                  onClick={() => setAvatarUrl('')}
-                  className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors"
-                >
-                  Remove
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 text-center">
-          {error}
-        </div>
-      )}
-
-      {savedSuccess && (
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 flex items-center justify-center gap-2">
-          <Check className="size-4" />
-          <span>Profile updated successfully! Redirecting...</span>
-        </div>
-      )}
-
-      {/* Inputs */}
-      <div className="flex flex-col gap-4">
-        {/* Name */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-400">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your full name"
-            className="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 focus:border-neutral-600 rounded-xl text-sm text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
-          />
-        </div>
-
-        {/* Username */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-400">Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="your_username"
-            required
-            className="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 focus:border-neutral-600 rounded-xl text-sm text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
-          />
-        </div>
-
-        {/* Subtitle / Title */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-400">Category / Profession</label>
-          <input
-            type="text"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            placeholder="e.g. Photographer, Designer, Creator"
-            className="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 focus:border-neutral-600 rounded-xl text-sm text-white placeholder:text-neutral-600 focus:outline-none transition-colors"
-          />
-        </div>
-
-        {/* Bio */}
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-neutral-400">Bio</label>
-            <span className="text-[11px] text-neutral-500">{bio.length} / 150</span>
-          </div>
-          <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value.slice(0, 150))}
-            rows={3}
-            placeholder="Write a short bio about yourself..."
-            className="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 focus:border-neutral-600 rounded-xl text-sm text-white placeholder:text-neutral-600 focus:outline-none transition-colors resize-none"
-          />
-        </div>
-      </div>
-
-      {/* Submit Button */}
-      <div className="pt-2">
+        <input ref={fileInput} type="file" accept="image/*" className="hidden" onChange={uploadAvatar} />
         <button
-          type="submit"
-          disabled={saving}
-          className="w-full py-3 px-4 bg-sky-500 hover:bg-sky-400 active:scale-[0.99] disabled:opacity-50 text-white font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2"
+          type="button"
+          onClick={() => fileInput.current?.click()}
+          disabled={uploading}
+          className="rounded-lg bg-sky-500 px-3 py-1.5 text-sm font-semibold hover:bg-sky-600 disabled:opacity-60"
         >
-          {saving ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              <span>Saving changes...</span>
-            </>
-          ) : (
-            <span>Submit</span>
-          )}
+          {uploading ? 'Uploading…' : 'Change photo'}
         </button>
       </div>
+
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        Name
+        <input value={form.name} onChange={update('name')} maxLength={60} className={inputClass} />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        Username
+        <input
+          value={form.username}
+          onChange={update('username')}
+          required
+          minLength={3}
+          maxLength={30}
+          pattern="[A-Za-z0-9._]+"
+          className={inputClass}
+        />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        Category
+        <input
+          value={form.subtitle}
+          onChange={update('subtitle')}
+          maxLength={60}
+          placeholder="Photographer, designer, creator…"
+          className={inputClass}
+        />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        <span className="flex justify-between">
+          Bio <span className="font-normal text-neutral-500">{form.bio.length} / 150</span>
+        </span>
+        <textarea value={form.bio} onChange={update('bio')} maxLength={150} rows={3} className={`${inputClass} resize-none`} />
+      </label>
+
+      {status && (
+        <p className={`text-sm ${status.type === 'success' ? 'text-emerald-400' : 'text-rose-400'}`}>{status.message}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={saving}
+        className="rounded-lg bg-sky-500 py-2 text-sm font-semibold hover:bg-sky-600 disabled:opacity-60"
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </button>
     </form>
   );
 }

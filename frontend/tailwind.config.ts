@@ -1,20 +1,32 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  darkMode: ['selector', '[data-theme="dark"]'],
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      colors: {
-        'ig-red': "var(--red)",
-        'ig-orange': "var(--orange)",
+      fontFamily: {
+        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+      },
+      keyframes: {
+        'story-progress': {
+          from: { width: '0%' },
+          to: { width: '100%' },
+        },
+        'heart-pop': {
+          '0%': { transform: 'scale(0)', opacity: '0' },
+          '15%': { transform: 'scale(1.2)', opacity: '1' },
+          '30%': { transform: 'scale(1)' },
+          '80%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+      },
+      animation: {
+        'story-progress': 'story-progress 5s linear forwards',
+        'heart-pop': 'heart-pop 900ms ease-out forwards',
       },
     },
   },
   plugins: [],
 };
+
 export default config;
