@@ -1,0 +1,6 @@
+{
+  "demoImages": 20,
+  "profileImages": 5,
+  "postImages": 15,
+  "note": "Demo media is isolated under profiles/demo and posts/demo. Runtime uploads use user-specific profile folders and dated post/video folders, so new uploads append without replacing the 20 demo assets."
+}

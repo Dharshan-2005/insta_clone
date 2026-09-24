@@ -1,0 +1,40 @@
+{
+  "name": "instagram-clone-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:gateway": "npm run start:dev --prefix services/api-gateway",
+    "dev:auth": "npm run start:dev --prefix services/auth-service",
+    "dev:user": "npm run start:dev --prefix services/user-service",
+    "dev:post": "npm run start:dev --prefix services/post-service",
+    "dev:feed": "npm run start:dev --prefix services/feed-service",
+    "dev:notification": "npm run start:dev --prefix services/notification-service",
+    "build:packages": "npm run build --prefix packages/shared-types",
+    "build:services": "npm run build --prefix services/api-gateway && npm run build --prefix services/auth-service && npm run build --prefix services/user-service && npm run build --prefix services/post-service && npm run build --prefix services/feed-service && npm run build --prefix services/notification-service",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:all": "npm run build:packages && npm run build:services && npm run build:frontend",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:build": "docker compose build",
+    "prisma:generate": "npm run prisma:generate --prefix services/auth-service && npm run prisma:generate --prefix services/user-service && npm run prisma:generate --prefix services/post-service && npm run prisma:generate --prefix services/feed-service && npm run prisma:generate --prefix services/notification-service",
+    "prisma:migrate": "npm run prisma:migrate --prefix services/auth-service && npm run prisma:migrate --prefix services/user-service && npm run prisma:migrate --prefix services/post-service && npm run prisma:migrate --prefix services/feed-service && npm run prisma:migrate --prefix services/notification-service",
+    "seed": "ts-node scripts/seed-all.ts",
+    "seed:auth": "ts-node services/auth-service/prisma/seed.ts",
+    "seed:users": "ts-node services/user-service/prisma/seed.ts",
+    "seed:posts": "ts-node services/post-service/prisma/seed.ts",
+    "seed:feed": "ts-node services/feed-service/prisma/seed.ts",
+    "seed:notifs": "ts-node services/notification-service/prisma/seed.ts",
+    "seed:avatars": "ts-node scripts/generate-avatars.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
