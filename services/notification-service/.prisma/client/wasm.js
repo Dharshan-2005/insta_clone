@@ -8,7 +8,7 @@ const {
   Public,
   getRuntime,
   skip
-} = require('@prisma/client/runtime/index-browser.js')
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 5.22.0
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "5.22.0"
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -125,25 +125,25 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  type: 'type',
   actorId: 'actorId',
+  type: 'type',
   postId: 'postId',
-  message: 'message',
+  text: 'text',
   read: 'read',
   createdAt: 'createdAt'
 };
 
 exports.Prisma.ConversationScalarFieldEnum = {
   id: 'id',
+  key: 'key',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ConversationParticipantScalarFieldEnum = {
-  id: 'id',
+exports.Prisma.ParticipantScalarFieldEnum = {
   conversationId: 'conversationId',
   userId: 'userId',
-  createdAt: 'createdAt'
+  lastReadAt: 'lastReadAt'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
@@ -151,10 +151,6 @@ exports.Prisma.MessageScalarFieldEnum = {
   conversationId: 'conversationId',
   senderId: 'senderId',
   text: 'text',
-  type: 'type',
-  mediaPath: 'mediaPath',
-  postId: 'postId',
-  read: 'read',
   createdAt: 'createdAt'
 };
 
@@ -162,23 +158,14 @@ exports.Prisma.StoryScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   mediaPath: 'mediaPath',
-  mediaType: 'mediaType',
   caption: 'caption',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.StoryViewScalarFieldEnum = {
-  id: 'id',
   storyId: 'storyId',
   viewerId: 'viewerId',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.StoryLikeScalarFieldEnum = {
-  id: 'id',
-  storyId: 'storyId',
-  userId: 'userId',
   createdAt: 'createdAt'
 };
 
@@ -201,11 +188,10 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   Notification: 'Notification',
   Conversation: 'Conversation',
-  ConversationParticipant: 'ConversationParticipant',
+  Participant: 'Participant',
   Message: 'Message',
   Story: 'Story',
-  StoryView: 'StoryView',
-  StoryLike: 'StoryLike'
+  StoryView: 'StoryView'
 };
 
 /**

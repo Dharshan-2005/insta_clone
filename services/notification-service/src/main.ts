@@ -1,25 +1,20 @@
-import { NestFactory } from '@nestjs/core';
+import 'reflect-metadata';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { seedDemoData } from './demo-seed';
+import { PrismaService } from './prisma.service';
 
 async function bootstrap() {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET must be set');
+
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.enableShutdownHooks();
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-    }),
-  );
+  if (process.env.SEED_DEMO_DATA === 'true') await seedDemoData(app.get(PrismaService));
 
-  app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3050',
-    credentials: true,
-  });
-
-  const port = process.env.PORT || 4005;
-  await app.listen(port, '0.0.0.0');
-  console.log(`[notification-service] running on http://0.0.0.0:${port}`);
+  await app.listen(Number(process.env.PORT ?? 4005));
 }
 
 bootstrap();
