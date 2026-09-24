@@ -8,7 +8,7 @@ const {
   Public,
   getRuntime,
   skip
-} = require('@prisma/client/runtime/index-browser.js')
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 5.22.0
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "5.22.0"
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -124,8 +124,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.ProfileScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  email: 'email',
   username: 'username',
   name: 'name',
   bio: 'bio',
@@ -136,7 +134,6 @@ exports.Prisma.ProfileScalarFieldEnum = {
 };
 
 exports.Prisma.FollowScalarFieldEnum = {
-  id: 'id',
   followerId: 'followerId',
   followingId: 'followingId',
   createdAt: 'createdAt'

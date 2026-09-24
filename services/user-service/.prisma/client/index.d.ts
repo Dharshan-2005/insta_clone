@@ -3,7 +3,7 @@
  * Client
 **/
 
-import * as runtime from '@prisma/client/runtime/library.js';
+import * as runtime from './runtime/library.js';
 import $Types = runtime.Types // general types
 import $Public = runtime.Types.Public
 import $Utils = runtime.Types.Utils
@@ -226,7 +226,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 5.22.0
-   * Query Engine version: 5.22.0
+   * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
    */
   export type PrismaVersion = {
     client: string
@@ -941,8 +941,6 @@ export namespace Prisma {
 
   export type ProfileMinAggregateOutputType = {
     id: string | null
-    userId: string | null
-    email: string | null
     username: string | null
     name: string | null
     bio: string | null
@@ -954,8 +952,6 @@ export namespace Prisma {
 
   export type ProfileMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
-    email: string | null
     username: string | null
     name: string | null
     bio: string | null
@@ -967,8 +963,6 @@ export namespace Prisma {
 
   export type ProfileCountAggregateOutputType = {
     id: number
-    userId: number
-    email: number
     username: number
     name: number
     bio: number
@@ -982,8 +976,6 @@ export namespace Prisma {
 
   export type ProfileMinAggregateInputType = {
     id?: true
-    userId?: true
-    email?: true
     username?: true
     name?: true
     bio?: true
@@ -995,8 +987,6 @@ export namespace Prisma {
 
   export type ProfileMaxAggregateInputType = {
     id?: true
-    userId?: true
-    email?: true
     username?: true
     name?: true
     bio?: true
@@ -1008,8 +998,6 @@ export namespace Prisma {
 
   export type ProfileCountAggregateInputType = {
     id?: true
-    userId?: true
-    email?: true
     username?: true
     name?: true
     bio?: true
@@ -1094,9 +1082,7 @@ export namespace Prisma {
 
   export type ProfileGroupByOutputType = {
     id: string
-    userId: string
-    email: string
-    username: string | null
+    username: string
     name: string | null
     bio: string | null
     subtitle: string | null
@@ -1124,8 +1110,6 @@ export namespace Prisma {
 
   export type ProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
-    email?: boolean
     username?: boolean
     name?: boolean
     bio?: boolean
@@ -1137,8 +1121,6 @@ export namespace Prisma {
 
   export type ProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
-    email?: boolean
     username?: boolean
     name?: boolean
     bio?: boolean
@@ -1150,8 +1132,6 @@ export namespace Prisma {
 
   export type ProfileSelectScalar = {
     id?: boolean
-    userId?: boolean
-    email?: boolean
     username?: boolean
     name?: boolean
     bio?: boolean
@@ -1167,9 +1147,7 @@ export namespace Prisma {
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
-      email: string
-      username: string | null
+      username: string
       name: string | null
       bio: string | null
       subtitle: string | null
@@ -1570,8 +1548,6 @@ export namespace Prisma {
    */ 
   interface ProfileFieldRefs {
     readonly id: FieldRef<"Profile", 'String'>
-    readonly userId: FieldRef<"Profile", 'String'>
-    readonly email: FieldRef<"Profile", 'String'>
     readonly username: FieldRef<"Profile", 'String'>
     readonly name: FieldRef<"Profile", 'String'>
     readonly bio: FieldRef<"Profile", 'String'>
@@ -1878,21 +1854,18 @@ export namespace Prisma {
   }
 
   export type FollowMinAggregateOutputType = {
-    id: string | null
     followerId: string | null
     followingId: string | null
     createdAt: Date | null
   }
 
   export type FollowMaxAggregateOutputType = {
-    id: string | null
     followerId: string | null
     followingId: string | null
     createdAt: Date | null
   }
 
   export type FollowCountAggregateOutputType = {
-    id: number
     followerId: number
     followingId: number
     createdAt: number
@@ -1901,21 +1874,18 @@ export namespace Prisma {
 
 
   export type FollowMinAggregateInputType = {
-    id?: true
     followerId?: true
     followingId?: true
     createdAt?: true
   }
 
   export type FollowMaxAggregateInputType = {
-    id?: true
     followerId?: true
     followingId?: true
     createdAt?: true
   }
 
   export type FollowCountAggregateInputType = {
-    id?: true
     followerId?: true
     followingId?: true
     createdAt?: true
@@ -1995,7 +1965,6 @@ export namespace Prisma {
   }
 
   export type FollowGroupByOutputType = {
-    id: string
     followerId: string
     followingId: string
     createdAt: Date
@@ -2019,21 +1988,18 @@ export namespace Prisma {
 
 
   export type FollowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     followerId?: boolean
     followingId?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["follow"]>
 
   export type FollowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     followerId?: boolean
     followingId?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["follow"]>
 
   export type FollowSelectScalar = {
-    id?: boolean
     followerId?: boolean
     followingId?: boolean
     createdAt?: boolean
@@ -2044,7 +2010,6 @@ export namespace Prisma {
     name: "Follow"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      id: string
       followerId: string
       followingId: string
       createdAt: Date
@@ -2131,8 +2096,8 @@ export namespace Prisma {
      * // Get first 10 Follows
      * const follows = await prisma.follow.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const followWithIdOnly = await prisma.follow.findMany({ select: { id: true } })
+     * // Only select the `followerId`
+     * const followWithFollowerIdOnly = await prisma.follow.findMany({ select: { followerId: true } })
      * 
      */
     findMany<T extends FollowFindManyArgs>(args?: SelectSubset<T, FollowFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany">>
@@ -2176,9 +2141,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many Follows and only return the `id`
-     * const followWithIdOnly = await prisma.follow.createManyAndReturn({ 
-     *   select: { id: true },
+     * // Create many Follows and only return the `followerId`
+     * const followWithFollowerIdOnly = await prisma.follow.createManyAndReturn({ 
+     *   select: { followerId: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -2441,7 +2406,6 @@ export namespace Prisma {
    * Fields of the Follow model
    */ 
   interface FollowFieldRefs {
-    readonly id: FieldRef<"Follow", 'String'>
     readonly followerId: FieldRef<"Follow", 'String'>
     readonly followingId: FieldRef<"Follow", 'String'>
     readonly createdAt: FieldRef<"Follow", 'DateTime'>
@@ -2749,8 +2713,6 @@ export namespace Prisma {
 
   export const ProfileScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
-    email: 'email',
     username: 'username',
     name: 'name',
     bio: 'bio',
@@ -2764,7 +2726,6 @@ export namespace Prisma {
 
 
   export const FollowScalarFieldEnum: {
-    id: 'id',
     followerId: 'followerId',
     followingId: 'followingId',
     createdAt: 'createdAt'
@@ -2852,9 +2813,7 @@ export namespace Prisma {
     OR?: ProfileWhereInput[]
     NOT?: ProfileWhereInput | ProfileWhereInput[]
     id?: StringFilter<"Profile"> | string
-    userId?: StringFilter<"Profile"> | string
-    email?: StringFilter<"Profile"> | string
-    username?: StringNullableFilter<"Profile"> | string | null
+    username?: StringFilter<"Profile"> | string
     name?: StringNullableFilter<"Profile"> | string | null
     bio?: StringNullableFilter<"Profile"> | string | null
     subtitle?: StringNullableFilter<"Profile"> | string | null
@@ -2865,9 +2824,7 @@ export namespace Prisma {
 
   export type ProfileOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
-    email?: SortOrder
-    username?: SortOrderInput | SortOrder
+    username?: SortOrder
     name?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
     subtitle?: SortOrderInput | SortOrder
@@ -2878,8 +2835,6 @@ export namespace Prisma {
 
   export type ProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    userId?: string
-    email?: string
     username?: string
     AND?: ProfileWhereInput | ProfileWhereInput[]
     OR?: ProfileWhereInput[]
@@ -2890,13 +2845,11 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
-  }, "id" | "userId" | "email" | "username">
+  }, "id" | "username">
 
   export type ProfileOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
-    email?: SortOrder
-    username?: SortOrderInput | SortOrder
+    username?: SortOrder
     name?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
     subtitle?: SortOrderInput | SortOrder
@@ -2913,9 +2866,7 @@ export namespace Prisma {
     OR?: ProfileScalarWhereWithAggregatesInput[]
     NOT?: ProfileScalarWhereWithAggregatesInput | ProfileScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Profile"> | string
-    userId?: StringWithAggregatesFilter<"Profile"> | string
-    email?: StringWithAggregatesFilter<"Profile"> | string
-    username?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    username?: StringWithAggregatesFilter<"Profile"> | string
     name?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     bio?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     subtitle?: StringNullableWithAggregatesFilter<"Profile"> | string | null
@@ -2928,21 +2879,18 @@ export namespace Prisma {
     AND?: FollowWhereInput | FollowWhereInput[]
     OR?: FollowWhereInput[]
     NOT?: FollowWhereInput | FollowWhereInput[]
-    id?: StringFilter<"Follow"> | string
     followerId?: StringFilter<"Follow"> | string
     followingId?: StringFilter<"Follow"> | string
     createdAt?: DateTimeFilter<"Follow"> | Date | string
   }
 
   export type FollowOrderByWithRelationInput = {
-    id?: SortOrder
     followerId?: SortOrder
     followingId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type FollowWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
     followerId_followingId?: FollowFollowerIdFollowingIdCompoundUniqueInput
     AND?: FollowWhereInput | FollowWhereInput[]
     OR?: FollowWhereInput[]
@@ -2950,10 +2898,9 @@ export namespace Prisma {
     followerId?: StringFilter<"Follow"> | string
     followingId?: StringFilter<"Follow"> | string
     createdAt?: DateTimeFilter<"Follow"> | Date | string
-  }, "id" | "followerId_followingId">
+  }, "followerId_followingId">
 
   export type FollowOrderByWithAggregationInput = {
-    id?: SortOrder
     followerId?: SortOrder
     followingId?: SortOrder
     createdAt?: SortOrder
@@ -2966,17 +2913,14 @@ export namespace Prisma {
     AND?: FollowScalarWhereWithAggregatesInput | FollowScalarWhereWithAggregatesInput[]
     OR?: FollowScalarWhereWithAggregatesInput[]
     NOT?: FollowScalarWhereWithAggregatesInput | FollowScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Follow"> | string
     followerId?: StringWithAggregatesFilter<"Follow"> | string
     followingId?: StringWithAggregatesFilter<"Follow"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Follow"> | Date | string
   }
 
   export type ProfileCreateInput = {
-    id?: string
-    userId: string
-    email: string
-    username?: string | null
+    id: string
+    username: string
     name?: string | null
     bio?: string | null
     subtitle?: string | null
@@ -2986,10 +2930,8 @@ export namespace Prisma {
   }
 
   export type ProfileUncheckedCreateInput = {
-    id?: string
-    userId: string
-    email: string
-    username?: string | null
+    id: string
+    username: string
     name?: string | null
     bio?: string | null
     subtitle?: string | null
@@ -3000,9 +2942,7 @@ export namespace Prisma {
 
   export type ProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     subtitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -3013,9 +2953,7 @@ export namespace Prisma {
 
   export type ProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     subtitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -3025,10 +2963,8 @@ export namespace Prisma {
   }
 
   export type ProfileCreateManyInput = {
-    id?: string
-    userId: string
-    email: string
-    username?: string | null
+    id: string
+    username: string
     name?: string | null
     bio?: string | null
     subtitle?: string | null
@@ -3039,9 +2975,7 @@ export namespace Prisma {
 
   export type ProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     subtitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -3052,9 +2986,7 @@ export namespace Prisma {
 
   export type ProfileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     subtitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -3064,49 +2996,42 @@ export namespace Prisma {
   }
 
   export type FollowCreateInput = {
-    id?: string
     followerId: string
     followingId: string
     createdAt?: Date | string
   }
 
   export type FollowUncheckedCreateInput = {
-    id?: string
     followerId: string
     followingId: string
     createdAt?: Date | string
   }
 
   export type FollowUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     followerId?: StringFieldUpdateOperationsInput | string
     followingId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FollowUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     followerId?: StringFieldUpdateOperationsInput | string
     followingId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FollowCreateManyInput = {
-    id?: string
     followerId: string
     followingId: string
     createdAt?: Date | string
   }
 
   export type FollowUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     followerId?: StringFieldUpdateOperationsInput | string
     followingId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FollowUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
     followerId?: StringFieldUpdateOperationsInput | string
     followingId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3160,8 +3085,6 @@ export namespace Prisma {
 
   export type ProfileCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    email?: SortOrder
     username?: SortOrder
     name?: SortOrder
     bio?: SortOrder
@@ -3173,8 +3096,6 @@ export namespace Prisma {
 
   export type ProfileMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    email?: SortOrder
     username?: SortOrder
     name?: SortOrder
     bio?: SortOrder
@@ -3186,8 +3107,6 @@ export namespace Prisma {
 
   export type ProfileMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    email?: SortOrder
     username?: SortOrder
     name?: SortOrder
     bio?: SortOrder
@@ -3253,21 +3172,18 @@ export namespace Prisma {
   }
 
   export type FollowCountOrderByAggregateInput = {
-    id?: SortOrder
     followerId?: SortOrder
     followingId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type FollowMaxOrderByAggregateInput = {
-    id?: SortOrder
     followerId?: SortOrder
     followingId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type FollowMinOrderByAggregateInput = {
-    id?: SortOrder
     followerId?: SortOrder
     followingId?: SortOrder
     createdAt?: SortOrder

@@ -1,17 +1,20 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
-import { KafkaModule } from './kafka/kafka.module';
-import { UsersModule } from './users/users.module';
-import { HealthModule } from './health/health.module';
+import { Controller, Get, Module } from '@nestjs/common';
+import { EventsService } from './events.service';
+import { InternalController } from './internal.controller';
+import { PrismaService } from './prisma.service';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+
+@Controller('health')
+class HealthController {
+  @Get()
+  check() {
+    return { status: 'ok' };
+  }
+}
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule,
-    KafkaModule,
-    UsersModule,
-    HealthModule,
-  ],
+  controllers: [UsersController, InternalController, HealthController],
+  providers: [UsersService, PrismaService, EventsService],
 })
 export class AppModule {}

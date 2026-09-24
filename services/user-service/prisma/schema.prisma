@@ -1,18 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../.prisma/client"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["windows", "linux-musl-openssl-3.0.x"]
-}
-
 model Profile {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  email     String   @unique
-  username  String?  @unique
+  id        String   @id
+  username  String   @unique
   name      String?
   bio       String?
   subtitle  String?
@@ -20,19 +18,15 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([username])
-  @@index([email])
   @@map("profiles")
 }
 
 model Follow {
-  id          String   @id @default(uuid())
   followerId  String
   followingId String
   createdAt   DateTime @default(now())
 
-  @@unique([followerId, followingId])
-  @@index([followerId])
+  @@id([followerId, followingId])
   @@index([followingId])
   @@map("follows")
 }
