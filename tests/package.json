@@ -1,0 +1,12 @@
+{
+  "name": "@instagram/e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node e2e.mjs"
+  },
+  "dependencies": {
+    "socket.io-client": "4.8.3"
+  }
+}
