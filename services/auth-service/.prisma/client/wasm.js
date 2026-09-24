@@ -8,7 +8,7 @@ const {
   Public,
   getRuntime,
   skip
-} = require('@prisma/client/runtime/index-browser.js')
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 5.22.0
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "5.22.0"
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -126,17 +126,6 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   passwordHash: 'passwordHash',
-  provider: 'provider',
-  providerId: 'providerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.RefreshTokenScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  token: 'token',
-  expiresAt: 'expiresAt',
   createdAt: 'createdAt'
 };
 
@@ -150,15 +139,9 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
-};
-
 
 exports.Prisma.ModelName = {
-  User: 'User',
-  RefreshToken: 'RefreshToken'
+  User: 'User'
 };
 
 /**
