@@ -1,54 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../.prisma/client"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["windows", "linux-musl-openssl-3.0.x"]
-}
-
 model Post {
-  id              String      @id @default(uuid())
-  userId          String
-  caption         String?
-  mediaPath       String      @default("")
-  mediaType       String      @default("image")
-  location        String?
-  commentsEnabled Boolean     @default(true)
-  likesEnabled    Boolean     @default(true)
-  likesCount      Int         @default(0)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id        String     @id @default(uuid())
+  userId    String
+  caption   String?
+  location  String?
+  mediaPath String
+  mediaType String     @default("image")
+  createdAt DateTime   @default(now())
+  likes     Like[]
+  comments  Comment[]
+  bookmarks Bookmark[]
 
-  media           PostMedia[]
-  comments        Comment[]
-  likes           Like[]
-  bookmarks       Bookmark[]
-
-  @@index([userId])
+  @@index([userId, createdAt])
   @@index([createdAt])
   @@map("posts")
-}
-
-model PostMedia {
-  id            String   @id @default(uuid())
-  postId        String
-  type          String   @default("image")
-  path          String
-  thumbnailPath String?
-  mimeType      String?
-  size          Int?
-  width         Int?
-  height        Int?
-  duration      Float?
-  position      Int      @default(0)
-  createdAt     DateTime @default(now())
-
-  post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@index([postId])
-  @@map("post_media")
 }
 
 model Comment {
@@ -57,38 +31,30 @@ model Comment {
   userId    String
   text      String
   createdAt DateTime @default(now())
-
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@index([postId])
-  @@index([userId])
+  @@index([postId, createdAt])
   @@map("comments")
 }
 
 model Like {
-  id        String   @id @default(uuid())
   postId    String
   userId    String
   createdAt DateTime @default(now())
-
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
-  @@index([postId])
+  @@id([postId, userId])
   @@index([userId])
   @@map("likes")
 }
 
 model Bookmark {
-  id        String   @id @default(uuid())
   postId    String
   userId    String
   createdAt DateTime @default(now())
-
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
-  @@index([postId])
+  @@id([postId, userId])
   @@index([userId])
   @@map("bookmarks")
 }

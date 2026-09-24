@@ -3,7 +3,7 @@
  * Client
 **/
 
-import * as runtime from '@prisma/client/runtime/library.js';
+import * as runtime from './runtime/library.js';
 import $Types = runtime.Types // general types
 import $Public = runtime.Types.Public
 import $Utils = runtime.Types.Utils
@@ -18,11 +18,6 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type Post = $Result.DefaultSelection<Prisma.$PostPayload>
-/**
- * Model PostMedia
- * 
- */
-export type PostMedia = $Result.DefaultSelection<Prisma.$PostMediaPayload>
 /**
  * Model Comment
  * 
@@ -173,16 +168,6 @@ export class PrismaClient<
   get post(): Prisma.PostDelegate<ExtArgs>;
 
   /**
-   * `prisma.postMedia`: Exposes CRUD operations for the **PostMedia** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more PostMedias
-    * const postMedias = await prisma.postMedia.findMany()
-    * ```
-    */
-  get postMedia(): Prisma.PostMediaDelegate<ExtArgs>;
-
-  /**
    * `prisma.comment`: Exposes CRUD operations for the **Comment** model.
     * Example usage:
     * ```ts
@@ -271,7 +256,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 5.22.0
-   * Query Engine version: 5.22.0
+   * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
    */
   export type PrismaVersion = {
     client: string
@@ -653,7 +638,6 @@ export namespace Prisma {
 
   export const ModelName: {
     Post: 'Post',
-    PostMedia: 'PostMedia',
     Comment: 'Comment',
     Like: 'Like',
     Bookmark: 'Bookmark'
@@ -672,7 +656,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "post" | "postMedia" | "comment" | "like" | "bookmark"
+      modelProps: "post" | "comment" | "like" | "bookmark"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -743,76 +727,6 @@ export namespace Prisma {
           count: {
             args: Prisma.PostCountArgs<ExtArgs>
             result: $Utils.Optional<PostCountAggregateOutputType> | number
-          }
-        }
-      }
-      PostMedia: {
-        payload: Prisma.$PostMediaPayload<ExtArgs>
-        fields: Prisma.PostMediaFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PostMediaFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PostMediaFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          findFirst: {
-            args: Prisma.PostMediaFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PostMediaFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          findMany: {
-            args: Prisma.PostMediaFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>[]
-          }
-          create: {
-            args: Prisma.PostMediaCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          createMany: {
-            args: Prisma.PostMediaCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PostMediaCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>[]
-          }
-          delete: {
-            args: Prisma.PostMediaDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          update: {
-            args: Prisma.PostMediaUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          deleteMany: {
-            args: Prisma.PostMediaDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PostMediaUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.PostMediaUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostMediaPayload>
-          }
-          aggregate: {
-            args: Prisma.PostMediaAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePostMedia>
-          }
-          groupBy: {
-            args: Prisma.PostMediaGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PostMediaGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PostMediaCountArgs<ExtArgs>
-            result: $Utils.Optional<PostMediaCountAggregateOutputType> | number
           }
         }
       }
@@ -1187,16 +1101,14 @@ export namespace Prisma {
    */
 
   export type PostCountOutputType = {
-    media: number
-    comments: number
     likes: number
+    comments: number
     bookmarks: number
   }
 
   export type PostCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    media?: boolean | PostCountOutputTypeCountMediaArgs
-    comments?: boolean | PostCountOutputTypeCountCommentsArgs
     likes?: boolean | PostCountOutputTypeCountLikesArgs
+    comments?: boolean | PostCountOutputTypeCountCommentsArgs
     bookmarks?: boolean | PostCountOutputTypeCountBookmarksArgs
   }
 
@@ -1214,8 +1126,8 @@ export namespace Prisma {
   /**
    * PostCountOutputType without action
    */
-  export type PostCountOutputTypeCountMediaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PostMediaWhereInput
+  export type PostCountOutputTypeCountLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LikeWhereInput
   }
 
   /**
@@ -1223,13 +1135,6 @@ export namespace Prisma {
    */
   export type PostCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
-  }
-
-  /**
-   * PostCountOutputType without action
-   */
-  export type PostCountOutputTypeCountLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: LikeWhereInput
   }
 
   /**
@@ -1250,112 +1155,70 @@ export namespace Prisma {
 
   export type AggregatePost = {
     _count: PostCountAggregateOutputType | null
-    _avg: PostAvgAggregateOutputType | null
-    _sum: PostSumAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
-  }
-
-  export type PostAvgAggregateOutputType = {
-    likesCount: number | null
-  }
-
-  export type PostSumAggregateOutputType = {
-    likesCount: number | null
   }
 
   export type PostMinAggregateOutputType = {
     id: string | null
     userId: string | null
     caption: string | null
+    location: string | null
     mediaPath: string | null
     mediaType: string | null
-    location: string | null
-    commentsEnabled: boolean | null
-    likesEnabled: boolean | null
-    likesCount: number | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type PostMaxAggregateOutputType = {
     id: string | null
     userId: string | null
     caption: string | null
+    location: string | null
     mediaPath: string | null
     mediaType: string | null
-    location: string | null
-    commentsEnabled: boolean | null
-    likesEnabled: boolean | null
-    likesCount: number | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type PostCountAggregateOutputType = {
     id: number
     userId: number
     caption: number
+    location: number
     mediaPath: number
     mediaType: number
-    location: number
-    commentsEnabled: number
-    likesEnabled: number
-    likesCount: number
     createdAt: number
-    updatedAt: number
     _all: number
   }
 
-
-  export type PostAvgAggregateInputType = {
-    likesCount?: true
-  }
-
-  export type PostSumAggregateInputType = {
-    likesCount?: true
-  }
 
   export type PostMinAggregateInputType = {
     id?: true
     userId?: true
     caption?: true
+    location?: true
     mediaPath?: true
     mediaType?: true
-    location?: true
-    commentsEnabled?: true
-    likesEnabled?: true
-    likesCount?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type PostMaxAggregateInputType = {
     id?: true
     userId?: true
     caption?: true
+    location?: true
     mediaPath?: true
     mediaType?: true
-    location?: true
-    commentsEnabled?: true
-    likesEnabled?: true
-    likesCount?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type PostCountAggregateInputType = {
     id?: true
     userId?: true
     caption?: true
+    location?: true
     mediaPath?: true
     mediaType?: true
-    location?: true
-    commentsEnabled?: true
-    likesEnabled?: true
-    likesCount?: true
     createdAt?: true
-    updatedAt?: true
     _all?: true
   }
 
@@ -1397,18 +1260,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: PostAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PostSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: PostMinAggregateInputType
@@ -1439,8 +1290,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: PostCountAggregateInputType | true
-    _avg?: PostAvgAggregateInputType
-    _sum?: PostSumAggregateInputType
     _min?: PostMinAggregateInputType
     _max?: PostMaxAggregateInputType
   }
@@ -1449,17 +1298,11 @@ export namespace Prisma {
     id: string
     userId: string
     caption: string | null
+    location: string | null
     mediaPath: string
     mediaType: string
-    location: string | null
-    commentsEnabled: boolean
-    likesEnabled: boolean
-    likesCount: number
     createdAt: Date
-    updatedAt: Date
     _count: PostCountAggregateOutputType | null
-    _avg: PostAvgAggregateOutputType | null
-    _sum: PostSumAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
   }
@@ -1482,17 +1325,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     caption?: boolean
+    location?: boolean
     mediaPath?: boolean
     mediaType?: boolean
-    location?: boolean
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
-    media?: boolean | Post$mediaArgs<ExtArgs>
-    comments?: boolean | Post$commentsArgs<ExtArgs>
     likes?: boolean | Post$likesArgs<ExtArgs>
+    comments?: boolean | Post$commentsArgs<ExtArgs>
     bookmarks?: boolean | Post$bookmarksArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["post"]>
@@ -1501,34 +1339,25 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     caption?: boolean
+    location?: boolean
     mediaPath?: boolean
     mediaType?: boolean
-    location?: boolean
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["post"]>
 
   export type PostSelectScalar = {
     id?: boolean
     userId?: boolean
     caption?: boolean
+    location?: boolean
     mediaPath?: boolean
     mediaType?: boolean
-    location?: boolean
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }
 
   export type PostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    media?: boolean | Post$mediaArgs<ExtArgs>
-    comments?: boolean | Post$commentsArgs<ExtArgs>
     likes?: boolean | Post$likesArgs<ExtArgs>
+    comments?: boolean | Post$commentsArgs<ExtArgs>
     bookmarks?: boolean | Post$bookmarksArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -1537,23 +1366,18 @@ export namespace Prisma {
   export type $PostPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Post"
     objects: {
-      media: Prisma.$PostMediaPayload<ExtArgs>[]
-      comments: Prisma.$CommentPayload<ExtArgs>[]
       likes: Prisma.$LikePayload<ExtArgs>[]
+      comments: Prisma.$CommentPayload<ExtArgs>[]
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
       caption: string | null
+      location: string | null
       mediaPath: string
       mediaType: string
-      location: string | null
-      commentsEnabled: boolean
-      likesEnabled: boolean
-      likesCount: number
       createdAt: Date
-      updatedAt: Date
     }, ExtArgs["result"]["post"]>
     composites: {}
   }
@@ -1918,9 +1742,8 @@ export namespace Prisma {
    */
   export interface Prisma__PostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    media<T extends Post$mediaArgs<ExtArgs> = {}>(args?: Subset<T, Post$mediaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findMany"> | Null>
-    comments<T extends Post$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Post$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany"> | Null>
     likes<T extends Post$likesArgs<ExtArgs> = {}>(args?: Subset<T, Post$likesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany"> | Null>
+    comments<T extends Post$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Post$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany"> | Null>
     bookmarks<T extends Post$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Post$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1954,14 +1777,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Post", 'String'>
     readonly userId: FieldRef<"Post", 'String'>
     readonly caption: FieldRef<"Post", 'String'>
+    readonly location: FieldRef<"Post", 'String'>
     readonly mediaPath: FieldRef<"Post", 'String'>
     readonly mediaType: FieldRef<"Post", 'String'>
-    readonly location: FieldRef<"Post", 'String'>
-    readonly commentsEnabled: FieldRef<"Post", 'Boolean'>
-    readonly likesEnabled: FieldRef<"Post", 'Boolean'>
-    readonly likesCount: FieldRef<"Post", 'Int'>
     readonly createdAt: FieldRef<"Post", 'DateTime'>
-    readonly updatedAt: FieldRef<"Post", 'DateTime'>
   }
     
 
@@ -2276,23 +2095,23 @@ export namespace Prisma {
   }
 
   /**
-   * Post.media
+   * Post.likes
    */
-  export type Post$mediaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Post$likesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostMedia
+     * Select specific fields to fetch from the Like
      */
-    select?: PostMediaSelect<ExtArgs> | null
+    select?: LikeSelect<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: PostMediaInclude<ExtArgs> | null
-    where?: PostMediaWhereInput
-    orderBy?: PostMediaOrderByWithRelationInput | PostMediaOrderByWithRelationInput[]
-    cursor?: PostMediaWhereUniqueInput
+    include?: LikeInclude<ExtArgs> | null
+    where?: LikeWhereInput
+    orderBy?: LikeOrderByWithRelationInput | LikeOrderByWithRelationInput[]
+    cursor?: LikeWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: PostMediaScalarFieldEnum | PostMediaScalarFieldEnum[]
+    distinct?: LikeScalarFieldEnum | LikeScalarFieldEnum[]
   }
 
   /**
@@ -2313,26 +2132,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
-  }
-
-  /**
-   * Post.likes
-   */
-  export type Post$likesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Like
-     */
-    select?: LikeSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LikeInclude<ExtArgs> | null
-    where?: LikeWhereInput
-    orderBy?: LikeOrderByWithRelationInput | LikeOrderByWithRelationInput[]
-    cursor?: LikeWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: LikeScalarFieldEnum | LikeScalarFieldEnum[]
   }
 
   /**
@@ -2367,1073 +2166,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PostInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model PostMedia
-   */
-
-  export type AggregatePostMedia = {
-    _count: PostMediaCountAggregateOutputType | null
-    _avg: PostMediaAvgAggregateOutputType | null
-    _sum: PostMediaSumAggregateOutputType | null
-    _min: PostMediaMinAggregateOutputType | null
-    _max: PostMediaMaxAggregateOutputType | null
-  }
-
-  export type PostMediaAvgAggregateOutputType = {
-    size: number | null
-    width: number | null
-    height: number | null
-    duration: number | null
-    position: number | null
-  }
-
-  export type PostMediaSumAggregateOutputType = {
-    size: number | null
-    width: number | null
-    height: number | null
-    duration: number | null
-    position: number | null
-  }
-
-  export type PostMediaMinAggregateOutputType = {
-    id: string | null
-    postId: string | null
-    type: string | null
-    path: string | null
-    thumbnailPath: string | null
-    mimeType: string | null
-    size: number | null
-    width: number | null
-    height: number | null
-    duration: number | null
-    position: number | null
-    createdAt: Date | null
-  }
-
-  export type PostMediaMaxAggregateOutputType = {
-    id: string | null
-    postId: string | null
-    type: string | null
-    path: string | null
-    thumbnailPath: string | null
-    mimeType: string | null
-    size: number | null
-    width: number | null
-    height: number | null
-    duration: number | null
-    position: number | null
-    createdAt: Date | null
-  }
-
-  export type PostMediaCountAggregateOutputType = {
-    id: number
-    postId: number
-    type: number
-    path: number
-    thumbnailPath: number
-    mimeType: number
-    size: number
-    width: number
-    height: number
-    duration: number
-    position: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type PostMediaAvgAggregateInputType = {
-    size?: true
-    width?: true
-    height?: true
-    duration?: true
-    position?: true
-  }
-
-  export type PostMediaSumAggregateInputType = {
-    size?: true
-    width?: true
-    height?: true
-    duration?: true
-    position?: true
-  }
-
-  export type PostMediaMinAggregateInputType = {
-    id?: true
-    postId?: true
-    type?: true
-    path?: true
-    thumbnailPath?: true
-    mimeType?: true
-    size?: true
-    width?: true
-    height?: true
-    duration?: true
-    position?: true
-    createdAt?: true
-  }
-
-  export type PostMediaMaxAggregateInputType = {
-    id?: true
-    postId?: true
-    type?: true
-    path?: true
-    thumbnailPath?: true
-    mimeType?: true
-    size?: true
-    width?: true
-    height?: true
-    duration?: true
-    position?: true
-    createdAt?: true
-  }
-
-  export type PostMediaCountAggregateInputType = {
-    id?: true
-    postId?: true
-    type?: true
-    path?: true
-    thumbnailPath?: true
-    mimeType?: true
-    size?: true
-    width?: true
-    height?: true
-    duration?: true
-    position?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type PostMediaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PostMedia to aggregate.
-     */
-    where?: PostMediaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PostMedias to fetch.
-     */
-    orderBy?: PostMediaOrderByWithRelationInput | PostMediaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PostMediaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PostMedias from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PostMedias.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned PostMedias
-    **/
-    _count?: true | PostMediaCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: PostMediaAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PostMediaSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PostMediaMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PostMediaMaxAggregateInputType
-  }
-
-  export type GetPostMediaAggregateType<T extends PostMediaAggregateArgs> = {
-        [P in keyof T & keyof AggregatePostMedia]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePostMedia[P]>
-      : GetScalarType<T[P], AggregatePostMedia[P]>
-  }
-
-
-
-
-  export type PostMediaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PostMediaWhereInput
-    orderBy?: PostMediaOrderByWithAggregationInput | PostMediaOrderByWithAggregationInput[]
-    by: PostMediaScalarFieldEnum[] | PostMediaScalarFieldEnum
-    having?: PostMediaScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PostMediaCountAggregateInputType | true
-    _avg?: PostMediaAvgAggregateInputType
-    _sum?: PostMediaSumAggregateInputType
-    _min?: PostMediaMinAggregateInputType
-    _max?: PostMediaMaxAggregateInputType
-  }
-
-  export type PostMediaGroupByOutputType = {
-    id: string
-    postId: string
-    type: string
-    path: string
-    thumbnailPath: string | null
-    mimeType: string | null
-    size: number | null
-    width: number | null
-    height: number | null
-    duration: number | null
-    position: number
-    createdAt: Date
-    _count: PostMediaCountAggregateOutputType | null
-    _avg: PostMediaAvgAggregateOutputType | null
-    _sum: PostMediaSumAggregateOutputType | null
-    _min: PostMediaMinAggregateOutputType | null
-    _max: PostMediaMaxAggregateOutputType | null
-  }
-
-  type GetPostMediaGroupByPayload<T extends PostMediaGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PostMediaGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PostMediaGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PostMediaGroupByOutputType[P]>
-            : GetScalarType<T[P], PostMediaGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PostMediaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    postId?: boolean
-    type?: boolean
-    path?: boolean
-    thumbnailPath?: boolean
-    mimeType?: boolean
-    size?: boolean
-    width?: boolean
-    height?: boolean
-    duration?: boolean
-    position?: boolean
-    createdAt?: boolean
-    post?: boolean | PostDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["postMedia"]>
-
-  export type PostMediaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    postId?: boolean
-    type?: boolean
-    path?: boolean
-    thumbnailPath?: boolean
-    mimeType?: boolean
-    size?: boolean
-    width?: boolean
-    height?: boolean
-    duration?: boolean
-    position?: boolean
-    createdAt?: boolean
-    post?: boolean | PostDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["postMedia"]>
-
-  export type PostMediaSelectScalar = {
-    id?: boolean
-    postId?: boolean
-    type?: boolean
-    path?: boolean
-    thumbnailPath?: boolean
-    mimeType?: boolean
-    size?: boolean
-    width?: boolean
-    height?: boolean
-    duration?: boolean
-    position?: boolean
-    createdAt?: boolean
-  }
-
-  export type PostMediaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    post?: boolean | PostDefaultArgs<ExtArgs>
-  }
-  export type PostMediaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    post?: boolean | PostDefaultArgs<ExtArgs>
-  }
-
-  export type $PostMediaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PostMedia"
-    objects: {
-      post: Prisma.$PostPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      postId: string
-      type: string
-      path: string
-      thumbnailPath: string | null
-      mimeType: string | null
-      size: number | null
-      width: number | null
-      height: number | null
-      duration: number | null
-      position: number
-      createdAt: Date
-    }, ExtArgs["result"]["postMedia"]>
-    composites: {}
-  }
-
-  type PostMediaGetPayload<S extends boolean | null | undefined | PostMediaDefaultArgs> = $Result.GetResult<Prisma.$PostMediaPayload, S>
-
-  type PostMediaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<PostMediaFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: PostMediaCountAggregateInputType | true
-    }
-
-  export interface PostMediaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PostMedia'], meta: { name: 'PostMedia' } }
-    /**
-     * Find zero or one PostMedia that matches the filter.
-     * @param {PostMediaFindUniqueArgs} args - Arguments to find a PostMedia
-     * @example
-     * // Get one PostMedia
-     * const postMedia = await prisma.postMedia.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PostMediaFindUniqueArgs>(args: SelectSubset<T, PostMediaFindUniqueArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one PostMedia that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {PostMediaFindUniqueOrThrowArgs} args - Arguments to find a PostMedia
-     * @example
-     * // Get one PostMedia
-     * const postMedia = await prisma.postMedia.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PostMediaFindUniqueOrThrowArgs>(args: SelectSubset<T, PostMediaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first PostMedia that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaFindFirstArgs} args - Arguments to find a PostMedia
-     * @example
-     * // Get one PostMedia
-     * const postMedia = await prisma.postMedia.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PostMediaFindFirstArgs>(args?: SelectSubset<T, PostMediaFindFirstArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first PostMedia that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaFindFirstOrThrowArgs} args - Arguments to find a PostMedia
-     * @example
-     * // Get one PostMedia
-     * const postMedia = await prisma.postMedia.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PostMediaFindFirstOrThrowArgs>(args?: SelectSubset<T, PostMediaFindFirstOrThrowArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more PostMedias that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all PostMedias
-     * const postMedias = await prisma.postMedia.findMany()
-     * 
-     * // Get first 10 PostMedias
-     * const postMedias = await prisma.postMedia.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const postMediaWithIdOnly = await prisma.postMedia.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PostMediaFindManyArgs>(args?: SelectSubset<T, PostMediaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a PostMedia.
-     * @param {PostMediaCreateArgs} args - Arguments to create a PostMedia.
-     * @example
-     * // Create one PostMedia
-     * const PostMedia = await prisma.postMedia.create({
-     *   data: {
-     *     // ... data to create a PostMedia
-     *   }
-     * })
-     * 
-     */
-    create<T extends PostMediaCreateArgs>(args: SelectSubset<T, PostMediaCreateArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many PostMedias.
-     * @param {PostMediaCreateManyArgs} args - Arguments to create many PostMedias.
-     * @example
-     * // Create many PostMedias
-     * const postMedia = await prisma.postMedia.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PostMediaCreateManyArgs>(args?: SelectSubset<T, PostMediaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many PostMedias and returns the data saved in the database.
-     * @param {PostMediaCreateManyAndReturnArgs} args - Arguments to create many PostMedias.
-     * @example
-     * // Create many PostMedias
-     * const postMedia = await prisma.postMedia.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many PostMedias and only return the `id`
-     * const postMediaWithIdOnly = await prisma.postMedia.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PostMediaCreateManyAndReturnArgs>(args?: SelectSubset<T, PostMediaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a PostMedia.
-     * @param {PostMediaDeleteArgs} args - Arguments to delete one PostMedia.
-     * @example
-     * // Delete one PostMedia
-     * const PostMedia = await prisma.postMedia.delete({
-     *   where: {
-     *     // ... filter to delete one PostMedia
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PostMediaDeleteArgs>(args: SelectSubset<T, PostMediaDeleteArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one PostMedia.
-     * @param {PostMediaUpdateArgs} args - Arguments to update one PostMedia.
-     * @example
-     * // Update one PostMedia
-     * const postMedia = await prisma.postMedia.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PostMediaUpdateArgs>(args: SelectSubset<T, PostMediaUpdateArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more PostMedias.
-     * @param {PostMediaDeleteManyArgs} args - Arguments to filter PostMedias to delete.
-     * @example
-     * // Delete a few PostMedias
-     * const { count } = await prisma.postMedia.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PostMediaDeleteManyArgs>(args?: SelectSubset<T, PostMediaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PostMedias.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many PostMedias
-     * const postMedia = await prisma.postMedia.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PostMediaUpdateManyArgs>(args: SelectSubset<T, PostMediaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one PostMedia.
-     * @param {PostMediaUpsertArgs} args - Arguments to update or create a PostMedia.
-     * @example
-     * // Update or create a PostMedia
-     * const postMedia = await prisma.postMedia.upsert({
-     *   create: {
-     *     // ... data to create a PostMedia
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the PostMedia we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PostMediaUpsertArgs>(args: SelectSubset<T, PostMediaUpsertArgs<ExtArgs>>): Prisma__PostMediaClient<$Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of PostMedias.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaCountArgs} args - Arguments to filter PostMedias to count.
-     * @example
-     * // Count the number of PostMedias
-     * const count = await prisma.postMedia.count({
-     *   where: {
-     *     // ... the filter for the PostMedias we want to count
-     *   }
-     * })
-    **/
-    count<T extends PostMediaCountArgs>(
-      args?: Subset<T, PostMediaCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PostMediaCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a PostMedia.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PostMediaAggregateArgs>(args: Subset<T, PostMediaAggregateArgs>): Prisma.PrismaPromise<GetPostMediaAggregateType<T>>
-
-    /**
-     * Group by PostMedia.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostMediaGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PostMediaGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PostMediaGroupByArgs['orderBy'] }
-        : { orderBy?: PostMediaGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PostMediaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPostMediaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the PostMedia model
-   */
-  readonly fields: PostMediaFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for PostMedia.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PostMediaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    post<T extends PostDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PostDefaultArgs<ExtArgs>>): Prisma__PostClient<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the PostMedia model
-   */ 
-  interface PostMediaFieldRefs {
-    readonly id: FieldRef<"PostMedia", 'String'>
-    readonly postId: FieldRef<"PostMedia", 'String'>
-    readonly type: FieldRef<"PostMedia", 'String'>
-    readonly path: FieldRef<"PostMedia", 'String'>
-    readonly thumbnailPath: FieldRef<"PostMedia", 'String'>
-    readonly mimeType: FieldRef<"PostMedia", 'String'>
-    readonly size: FieldRef<"PostMedia", 'Int'>
-    readonly width: FieldRef<"PostMedia", 'Int'>
-    readonly height: FieldRef<"PostMedia", 'Int'>
-    readonly duration: FieldRef<"PostMedia", 'Float'>
-    readonly position: FieldRef<"PostMedia", 'Int'>
-    readonly createdAt: FieldRef<"PostMedia", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * PostMedia findUnique
-   */
-  export type PostMediaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter, which PostMedia to fetch.
-     */
-    where: PostMediaWhereUniqueInput
-  }
-
-  /**
-   * PostMedia findUniqueOrThrow
-   */
-  export type PostMediaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter, which PostMedia to fetch.
-     */
-    where: PostMediaWhereUniqueInput
-  }
-
-  /**
-   * PostMedia findFirst
-   */
-  export type PostMediaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter, which PostMedia to fetch.
-     */
-    where?: PostMediaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PostMedias to fetch.
-     */
-    orderBy?: PostMediaOrderByWithRelationInput | PostMediaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PostMedias.
-     */
-    cursor?: PostMediaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PostMedias from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PostMedias.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PostMedias.
-     */
-    distinct?: PostMediaScalarFieldEnum | PostMediaScalarFieldEnum[]
-  }
-
-  /**
-   * PostMedia findFirstOrThrow
-   */
-  export type PostMediaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter, which PostMedia to fetch.
-     */
-    where?: PostMediaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PostMedias to fetch.
-     */
-    orderBy?: PostMediaOrderByWithRelationInput | PostMediaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PostMedias.
-     */
-    cursor?: PostMediaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PostMedias from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PostMedias.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PostMedias.
-     */
-    distinct?: PostMediaScalarFieldEnum | PostMediaScalarFieldEnum[]
-  }
-
-  /**
-   * PostMedia findMany
-   */
-  export type PostMediaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter, which PostMedias to fetch.
-     */
-    where?: PostMediaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PostMedias to fetch.
-     */
-    orderBy?: PostMediaOrderByWithRelationInput | PostMediaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing PostMedias.
-     */
-    cursor?: PostMediaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PostMedias from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PostMedias.
-     */
-    skip?: number
-    distinct?: PostMediaScalarFieldEnum | PostMediaScalarFieldEnum[]
-  }
-
-  /**
-   * PostMedia create
-   */
-  export type PostMediaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * The data needed to create a PostMedia.
-     */
-    data: XOR<PostMediaCreateInput, PostMediaUncheckedCreateInput>
-  }
-
-  /**
-   * PostMedia createMany
-   */
-  export type PostMediaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many PostMedias.
-     */
-    data: PostMediaCreateManyInput | PostMediaCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * PostMedia createManyAndReturn
-   */
-  export type PostMediaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many PostMedias.
-     */
-    data: PostMediaCreateManyInput | PostMediaCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * PostMedia update
-   */
-  export type PostMediaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * The data needed to update a PostMedia.
-     */
-    data: XOR<PostMediaUpdateInput, PostMediaUncheckedUpdateInput>
-    /**
-     * Choose, which PostMedia to update.
-     */
-    where: PostMediaWhereUniqueInput
-  }
-
-  /**
-   * PostMedia updateMany
-   */
-  export type PostMediaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update PostMedias.
-     */
-    data: XOR<PostMediaUpdateManyMutationInput, PostMediaUncheckedUpdateManyInput>
-    /**
-     * Filter which PostMedias to update
-     */
-    where?: PostMediaWhereInput
-  }
-
-  /**
-   * PostMedia upsert
-   */
-  export type PostMediaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * The filter to search for the PostMedia to update in case it exists.
-     */
-    where: PostMediaWhereUniqueInput
-    /**
-     * In case the PostMedia found by the `where` argument doesn't exist, create a new PostMedia with this data.
-     */
-    create: XOR<PostMediaCreateInput, PostMediaUncheckedCreateInput>
-    /**
-     * In case the PostMedia was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PostMediaUpdateInput, PostMediaUncheckedUpdateInput>
-  }
-
-  /**
-   * PostMedia delete
-   */
-  export type PostMediaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
-    /**
-     * Filter which PostMedia to delete.
-     */
-    where: PostMediaWhereUniqueInput
-  }
-
-  /**
-   * PostMedia deleteMany
-   */
-  export type PostMediaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PostMedias to delete
-     */
-    where?: PostMediaWhereInput
-  }
-
-  /**
-   * PostMedia without action
-   */
-  export type PostMediaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PostMedia
-     */
-    select?: PostMediaSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PostMediaInclude<ExtArgs> | null
   }
 
 
@@ -4381,21 +3113,18 @@ export namespace Prisma {
   }
 
   export type LikeMinAggregateOutputType = {
-    id: string | null
     postId: string | null
     userId: string | null
     createdAt: Date | null
   }
 
   export type LikeMaxAggregateOutputType = {
-    id: string | null
     postId: string | null
     userId: string | null
     createdAt: Date | null
   }
 
   export type LikeCountAggregateOutputType = {
-    id: number
     postId: number
     userId: number
     createdAt: number
@@ -4404,21 +3133,18 @@ export namespace Prisma {
 
 
   export type LikeMinAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
   }
 
   export type LikeMaxAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
   }
 
   export type LikeCountAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
@@ -4498,7 +3224,6 @@ export namespace Prisma {
   }
 
   export type LikeGroupByOutputType = {
-    id: string
     postId: string
     userId: string
     createdAt: Date
@@ -4522,7 +3247,6 @@ export namespace Prisma {
 
 
   export type LikeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4530,7 +3254,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["like"]>
 
   export type LikeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4538,7 +3261,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["like"]>
 
   export type LikeSelectScalar = {
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -4557,7 +3279,6 @@ export namespace Prisma {
       post: Prisma.$PostPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: string
       postId: string
       userId: string
       createdAt: Date
@@ -4644,8 +3365,8 @@ export namespace Prisma {
      * // Get first 10 Likes
      * const likes = await prisma.like.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const likeWithIdOnly = await prisma.like.findMany({ select: { id: true } })
+     * // Only select the `postId`
+     * const likeWithPostIdOnly = await prisma.like.findMany({ select: { postId: true } })
      * 
      */
     findMany<T extends LikeFindManyArgs>(args?: SelectSubset<T, LikeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany">>
@@ -4689,9 +3410,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many Likes and only return the `id`
-     * const likeWithIdOnly = await prisma.like.createManyAndReturn({ 
-     *   select: { id: true },
+     * // Create many Likes and only return the `postId`
+     * const likeWithPostIdOnly = await prisma.like.createManyAndReturn({ 
+     *   select: { postId: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -4955,7 +3676,6 @@ export namespace Prisma {
    * Fields of the Like model
    */ 
   interface LikeFieldRefs {
-    readonly id: FieldRef<"Like", 'String'>
     readonly postId: FieldRef<"Like", 'String'>
     readonly userId: FieldRef<"Like", 'String'>
     readonly createdAt: FieldRef<"Like", 'DateTime'>
@@ -5302,21 +4022,18 @@ export namespace Prisma {
   }
 
   export type BookmarkMinAggregateOutputType = {
-    id: string | null
     postId: string | null
     userId: string | null
     createdAt: Date | null
   }
 
   export type BookmarkMaxAggregateOutputType = {
-    id: string | null
     postId: string | null
     userId: string | null
     createdAt: Date | null
   }
 
   export type BookmarkCountAggregateOutputType = {
-    id: number
     postId: number
     userId: number
     createdAt: number
@@ -5325,21 +4042,18 @@ export namespace Prisma {
 
 
   export type BookmarkMinAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
   }
 
   export type BookmarkMaxAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
   }
 
   export type BookmarkCountAggregateInputType = {
-    id?: true
     postId?: true
     userId?: true
     createdAt?: true
@@ -5419,7 +4133,6 @@ export namespace Prisma {
   }
 
   export type BookmarkGroupByOutputType = {
-    id: string
     postId: string
     userId: string
     createdAt: Date
@@ -5443,7 +4156,6 @@ export namespace Prisma {
 
 
   export type BookmarkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -5451,7 +4163,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["bookmark"]>
 
   export type BookmarkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -5459,7 +4170,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["bookmark"]>
 
   export type BookmarkSelectScalar = {
-    id?: boolean
     postId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -5478,7 +4188,6 @@ export namespace Prisma {
       post: Prisma.$PostPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: string
       postId: string
       userId: string
       createdAt: Date
@@ -5565,8 +4274,8 @@ export namespace Prisma {
      * // Get first 10 Bookmarks
      * const bookmarks = await prisma.bookmark.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const bookmarkWithIdOnly = await prisma.bookmark.findMany({ select: { id: true } })
+     * // Only select the `postId`
+     * const bookmarkWithPostIdOnly = await prisma.bookmark.findMany({ select: { postId: true } })
      * 
      */
     findMany<T extends BookmarkFindManyArgs>(args?: SelectSubset<T, BookmarkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany">>
@@ -5610,9 +4319,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many Bookmarks and only return the `id`
-     * const bookmarkWithIdOnly = await prisma.bookmark.createManyAndReturn({ 
-     *   select: { id: true },
+     * // Create many Bookmarks and only return the `postId`
+     * const bookmarkWithPostIdOnly = await prisma.bookmark.createManyAndReturn({ 
+     *   select: { postId: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -5876,7 +4585,6 @@ export namespace Prisma {
    * Fields of the Bookmark model
    */ 
   interface BookmarkFieldRefs {
-    readonly id: FieldRef<"Bookmark", 'String'>
     readonly postId: FieldRef<"Bookmark", 'String'>
     readonly userId: FieldRef<"Bookmark", 'String'>
     readonly createdAt: FieldRef<"Bookmark", 'DateTime'>
@@ -6230,35 +4938,13 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     caption: 'caption',
+    location: 'location',
     mediaPath: 'mediaPath',
     mediaType: 'mediaType',
-    location: 'location',
-    commentsEnabled: 'commentsEnabled',
-    likesEnabled: 'likesEnabled',
-    likesCount: 'likesCount',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
-
-
-  export const PostMediaScalarFieldEnum: {
-    id: 'id',
-    postId: 'postId',
-    type: 'type',
-    path: 'path',
-    thumbnailPath: 'thumbnailPath',
-    mimeType: 'mimeType',
-    size: 'size',
-    width: 'width',
-    height: 'height',
-    duration: 'duration',
-    position: 'position',
     createdAt: 'createdAt'
   };
 
-  export type PostMediaScalarFieldEnum = (typeof PostMediaScalarFieldEnum)[keyof typeof PostMediaScalarFieldEnum]
+  export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
   export const CommentScalarFieldEnum: {
@@ -6273,7 +4959,6 @@ export namespace Prisma {
 
 
   export const LikeScalarFieldEnum: {
-    id: 'id',
     postId: 'postId',
     userId: 'userId',
     createdAt: 'createdAt'
@@ -6283,7 +4968,6 @@ export namespace Prisma {
 
 
   export const BookmarkScalarFieldEnum: {
-    id: 'id',
     postId: 'postId',
     userId: 'userId',
     createdAt: 'createdAt'
@@ -6336,9 +5020,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'DateTime'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
 
 
@@ -6354,34 +5045,6 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
-
-
-  /**
-   * Reference to a field of type 'DateTime'
-   */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-  /**
-   * Reference to a field of type 'DateTime[]'
-   */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -6394,17 +5057,12 @@ export namespace Prisma {
     id?: StringFilter<"Post"> | string
     userId?: StringFilter<"Post"> | string
     caption?: StringNullableFilter<"Post"> | string | null
+    location?: StringNullableFilter<"Post"> | string | null
     mediaPath?: StringFilter<"Post"> | string
     mediaType?: StringFilter<"Post"> | string
-    location?: StringNullableFilter<"Post"> | string | null
-    commentsEnabled?: BoolFilter<"Post"> | boolean
-    likesEnabled?: BoolFilter<"Post"> | boolean
-    likesCount?: IntFilter<"Post"> | number
     createdAt?: DateTimeFilter<"Post"> | Date | string
-    updatedAt?: DateTimeFilter<"Post"> | Date | string
-    media?: PostMediaListRelationFilter
-    comments?: CommentListRelationFilter
     likes?: LikeListRelationFilter
+    comments?: CommentListRelationFilter
     bookmarks?: BookmarkListRelationFilter
   }
 
@@ -6412,17 +5070,12 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     caption?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
     mediaPath?: SortOrder
     mediaType?: SortOrder
-    location?: SortOrderInput | SortOrder
-    commentsEnabled?: SortOrder
-    likesEnabled?: SortOrder
-    likesCount?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
-    media?: PostMediaOrderByRelationAggregateInput
-    comments?: CommentOrderByRelationAggregateInput
     likes?: LikeOrderByRelationAggregateInput
+    comments?: CommentOrderByRelationAggregateInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
   }
 
@@ -6433,17 +5086,12 @@ export namespace Prisma {
     NOT?: PostWhereInput | PostWhereInput[]
     userId?: StringFilter<"Post"> | string
     caption?: StringNullableFilter<"Post"> | string | null
+    location?: StringNullableFilter<"Post"> | string | null
     mediaPath?: StringFilter<"Post"> | string
     mediaType?: StringFilter<"Post"> | string
-    location?: StringNullableFilter<"Post"> | string | null
-    commentsEnabled?: BoolFilter<"Post"> | boolean
-    likesEnabled?: BoolFilter<"Post"> | boolean
-    likesCount?: IntFilter<"Post"> | number
     createdAt?: DateTimeFilter<"Post"> | Date | string
-    updatedAt?: DateTimeFilter<"Post"> | Date | string
-    media?: PostMediaListRelationFilter
-    comments?: CommentListRelationFilter
     likes?: LikeListRelationFilter
+    comments?: CommentListRelationFilter
     bookmarks?: BookmarkListRelationFilter
   }, "id">
 
@@ -6451,19 +5099,13 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     caption?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
     mediaPath?: SortOrder
     mediaType?: SortOrder
-    location?: SortOrderInput | SortOrder
-    commentsEnabled?: SortOrder
-    likesEnabled?: SortOrder
-    likesCount?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
     _count?: PostCountOrderByAggregateInput
-    _avg?: PostAvgOrderByAggregateInput
     _max?: PostMaxOrderByAggregateInput
     _min?: PostMinOrderByAggregateInput
-    _sum?: PostSumOrderByAggregateInput
   }
 
   export type PostScalarWhereWithAggregatesInput = {
@@ -6473,106 +5115,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Post"> | string
     userId?: StringWithAggregatesFilter<"Post"> | string
     caption?: StringNullableWithAggregatesFilter<"Post"> | string | null
+    location?: StringNullableWithAggregatesFilter<"Post"> | string | null
     mediaPath?: StringWithAggregatesFilter<"Post"> | string
     mediaType?: StringWithAggregatesFilter<"Post"> | string
-    location?: StringNullableWithAggregatesFilter<"Post"> | string | null
-    commentsEnabled?: BoolWithAggregatesFilter<"Post"> | boolean
-    likesEnabled?: BoolWithAggregatesFilter<"Post"> | boolean
-    likesCount?: IntWithAggregatesFilter<"Post"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
-  }
-
-  export type PostMediaWhereInput = {
-    AND?: PostMediaWhereInput | PostMediaWhereInput[]
-    OR?: PostMediaWhereInput[]
-    NOT?: PostMediaWhereInput | PostMediaWhereInput[]
-    id?: StringFilter<"PostMedia"> | string
-    postId?: StringFilter<"PostMedia"> | string
-    type?: StringFilter<"PostMedia"> | string
-    path?: StringFilter<"PostMedia"> | string
-    thumbnailPath?: StringNullableFilter<"PostMedia"> | string | null
-    mimeType?: StringNullableFilter<"PostMedia"> | string | null
-    size?: IntNullableFilter<"PostMedia"> | number | null
-    width?: IntNullableFilter<"PostMedia"> | number | null
-    height?: IntNullableFilter<"PostMedia"> | number | null
-    duration?: FloatNullableFilter<"PostMedia"> | number | null
-    position?: IntFilter<"PostMedia"> | number
-    createdAt?: DateTimeFilter<"PostMedia"> | Date | string
-    post?: XOR<PostRelationFilter, PostWhereInput>
-  }
-
-  export type PostMediaOrderByWithRelationInput = {
-    id?: SortOrder
-    postId?: SortOrder
-    type?: SortOrder
-    path?: SortOrder
-    thumbnailPath?: SortOrderInput | SortOrder
-    mimeType?: SortOrderInput | SortOrder
-    size?: SortOrderInput | SortOrder
-    width?: SortOrderInput | SortOrder
-    height?: SortOrderInput | SortOrder
-    duration?: SortOrderInput | SortOrder
-    position?: SortOrder
-    createdAt?: SortOrder
-    post?: PostOrderByWithRelationInput
-  }
-
-  export type PostMediaWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: PostMediaWhereInput | PostMediaWhereInput[]
-    OR?: PostMediaWhereInput[]
-    NOT?: PostMediaWhereInput | PostMediaWhereInput[]
-    postId?: StringFilter<"PostMedia"> | string
-    type?: StringFilter<"PostMedia"> | string
-    path?: StringFilter<"PostMedia"> | string
-    thumbnailPath?: StringNullableFilter<"PostMedia"> | string | null
-    mimeType?: StringNullableFilter<"PostMedia"> | string | null
-    size?: IntNullableFilter<"PostMedia"> | number | null
-    width?: IntNullableFilter<"PostMedia"> | number | null
-    height?: IntNullableFilter<"PostMedia"> | number | null
-    duration?: FloatNullableFilter<"PostMedia"> | number | null
-    position?: IntFilter<"PostMedia"> | number
-    createdAt?: DateTimeFilter<"PostMedia"> | Date | string
-    post?: XOR<PostRelationFilter, PostWhereInput>
-  }, "id">
-
-  export type PostMediaOrderByWithAggregationInput = {
-    id?: SortOrder
-    postId?: SortOrder
-    type?: SortOrder
-    path?: SortOrder
-    thumbnailPath?: SortOrderInput | SortOrder
-    mimeType?: SortOrderInput | SortOrder
-    size?: SortOrderInput | SortOrder
-    width?: SortOrderInput | SortOrder
-    height?: SortOrderInput | SortOrder
-    duration?: SortOrderInput | SortOrder
-    position?: SortOrder
-    createdAt?: SortOrder
-    _count?: PostMediaCountOrderByAggregateInput
-    _avg?: PostMediaAvgOrderByAggregateInput
-    _max?: PostMediaMaxOrderByAggregateInput
-    _min?: PostMediaMinOrderByAggregateInput
-    _sum?: PostMediaSumOrderByAggregateInput
-  }
-
-  export type PostMediaScalarWhereWithAggregatesInput = {
-    AND?: PostMediaScalarWhereWithAggregatesInput | PostMediaScalarWhereWithAggregatesInput[]
-    OR?: PostMediaScalarWhereWithAggregatesInput[]
-    NOT?: PostMediaScalarWhereWithAggregatesInput | PostMediaScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"PostMedia"> | string
-    postId?: StringWithAggregatesFilter<"PostMedia"> | string
-    type?: StringWithAggregatesFilter<"PostMedia"> | string
-    path?: StringWithAggregatesFilter<"PostMedia"> | string
-    thumbnailPath?: StringNullableWithAggregatesFilter<"PostMedia"> | string | null
-    mimeType?: StringNullableWithAggregatesFilter<"PostMedia"> | string | null
-    size?: IntNullableWithAggregatesFilter<"PostMedia"> | number | null
-    width?: IntNullableWithAggregatesFilter<"PostMedia"> | number | null
-    height?: IntNullableWithAggregatesFilter<"PostMedia"> | number | null
-    duration?: FloatNullableWithAggregatesFilter<"PostMedia"> | number | null
-    position?: IntWithAggregatesFilter<"PostMedia"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"PostMedia"> | Date | string
   }
 
   export type CommentWhereInput = {
@@ -6634,7 +5180,6 @@ export namespace Prisma {
     AND?: LikeWhereInput | LikeWhereInput[]
     OR?: LikeWhereInput[]
     NOT?: LikeWhereInput | LikeWhereInput[]
-    id?: StringFilter<"Like"> | string
     postId?: StringFilter<"Like"> | string
     userId?: StringFilter<"Like"> | string
     createdAt?: DateTimeFilter<"Like"> | Date | string
@@ -6642,7 +5187,6 @@ export namespace Prisma {
   }
 
   export type LikeOrderByWithRelationInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6650,7 +5194,6 @@ export namespace Prisma {
   }
 
   export type LikeWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
     postId_userId?: LikePostIdUserIdCompoundUniqueInput
     AND?: LikeWhereInput | LikeWhereInput[]
     OR?: LikeWhereInput[]
@@ -6659,10 +5202,9 @@ export namespace Prisma {
     userId?: StringFilter<"Like"> | string
     createdAt?: DateTimeFilter<"Like"> | Date | string
     post?: XOR<PostRelationFilter, PostWhereInput>
-  }, "id" | "postId_userId">
+  }, "postId_userId">
 
   export type LikeOrderByWithAggregationInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6675,7 +5217,6 @@ export namespace Prisma {
     AND?: LikeScalarWhereWithAggregatesInput | LikeScalarWhereWithAggregatesInput[]
     OR?: LikeScalarWhereWithAggregatesInput[]
     NOT?: LikeScalarWhereWithAggregatesInput | LikeScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Like"> | string
     postId?: StringWithAggregatesFilter<"Like"> | string
     userId?: StringWithAggregatesFilter<"Like"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Like"> | Date | string
@@ -6685,7 +5226,6 @@ export namespace Prisma {
     AND?: BookmarkWhereInput | BookmarkWhereInput[]
     OR?: BookmarkWhereInput[]
     NOT?: BookmarkWhereInput | BookmarkWhereInput[]
-    id?: StringFilter<"Bookmark"> | string
     postId?: StringFilter<"Bookmark"> | string
     userId?: StringFilter<"Bookmark"> | string
     createdAt?: DateTimeFilter<"Bookmark"> | Date | string
@@ -6693,7 +5233,6 @@ export namespace Prisma {
   }
 
   export type BookmarkOrderByWithRelationInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6701,7 +5240,6 @@ export namespace Prisma {
   }
 
   export type BookmarkWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
     postId_userId?: BookmarkPostIdUserIdCompoundUniqueInput
     AND?: BookmarkWhereInput | BookmarkWhereInput[]
     OR?: BookmarkWhereInput[]
@@ -6710,10 +5248,9 @@ export namespace Prisma {
     userId?: StringFilter<"Bookmark"> | string
     createdAt?: DateTimeFilter<"Bookmark"> | Date | string
     post?: XOR<PostRelationFilter, PostWhereInput>
-  }, "id" | "postId_userId">
+  }, "postId_userId">
 
   export type BookmarkOrderByWithAggregationInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6726,7 +5263,6 @@ export namespace Prisma {
     AND?: BookmarkScalarWhereWithAggregatesInput | BookmarkScalarWhereWithAggregatesInput[]
     OR?: BookmarkScalarWhereWithAggregatesInput[]
     NOT?: BookmarkScalarWhereWithAggregatesInput | BookmarkScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Bookmark"> | string
     postId?: StringWithAggregatesFilter<"Bookmark"> | string
     userId?: StringWithAggregatesFilter<"Bookmark"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Bookmark"> | Date | string
@@ -6736,17 +5272,12 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaCreateNestedManyWithoutPostInput
-    comments?: CommentCreateNestedManyWithoutPostInput
     likes?: LikeCreateNestedManyWithoutPostInput
+    comments?: CommentCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkCreateNestedManyWithoutPostInput
   }
 
@@ -6754,17 +5285,12 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaUncheckedCreateNestedManyWithoutPostInput
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     likes?: LikeUncheckedCreateNestedManyWithoutPostInput
+    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -6772,17 +5298,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUpdateManyWithoutPostNestedInput
-    comments?: CommentUpdateManyWithoutPostNestedInput
     likes?: LikeUpdateManyWithoutPostNestedInput
+    comments?: CommentUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUpdateManyWithoutPostNestedInput
   }
 
@@ -6790,17 +5311,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUncheckedUpdateManyWithoutPostNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     likes?: LikeUncheckedUpdateManyWithoutPostNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutPostNestedInput
   }
 
@@ -6808,145 +5324,29 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type PostUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PostUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PostMediaCreateInput = {
-    id?: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
-    createdAt?: Date | string
-    post: PostCreateNestedOneWithoutMediaInput
-  }
-
-  export type PostMediaUncheckedCreateInput = {
-    id?: string
-    postId: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
-    createdAt?: Date | string
-  }
-
-  export type PostMediaUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    post?: PostUpdateOneRequiredWithoutMediaNestedInput
-  }
-
-  export type PostMediaUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    postId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PostMediaCreateManyInput = {
-    id?: string
-    postId: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
-    createdAt?: Date | string
-  }
-
-  export type PostMediaUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PostMediaUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    postId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7006,96 +5406,82 @@ export namespace Prisma {
   }
 
   export type LikeCreateInput = {
-    id?: string
     userId: string
     createdAt?: Date | string
     post: PostCreateNestedOneWithoutLikesInput
   }
 
   export type LikeUncheckedCreateInput = {
-    id?: string
     postId: string
     userId: string
     createdAt?: Date | string
   }
 
   export type LikeUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     post?: PostUpdateOneRequiredWithoutLikesNestedInput
   }
 
   export type LikeUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     postId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LikeCreateManyInput = {
-    id?: string
     postId: string
     userId: string
     createdAt?: Date | string
   }
 
   export type LikeUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LikeUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
     postId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookmarkCreateInput = {
-    id?: string
     userId: string
     createdAt?: Date | string
     post: PostCreateNestedOneWithoutBookmarksInput
   }
 
   export type BookmarkUncheckedCreateInput = {
-    id?: string
     postId: string
     userId: string
     createdAt?: Date | string
   }
 
   export type BookmarkUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     post?: PostUpdateOneRequiredWithoutBookmarksNestedInput
   }
 
   export type BookmarkUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     postId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookmarkCreateManyInput = {
-    id?: string
     postId: string
     userId: string
     createdAt?: Date | string
   }
 
   export type BookmarkUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookmarkUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
     postId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7131,22 +5517,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7158,22 +5528,16 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type PostMediaListRelationFilter = {
-    every?: PostMediaWhereInput
-    some?: PostMediaWhereInput
-    none?: PostMediaWhereInput
+  export type LikeListRelationFilter = {
+    every?: LikeWhereInput
+    some?: LikeWhereInput
+    none?: LikeWhereInput
   }
 
   export type CommentListRelationFilter = {
     every?: CommentWhereInput
     some?: CommentWhereInput
     none?: CommentWhereInput
-  }
-
-  export type LikeListRelationFilter = {
-    every?: LikeWhereInput
-    some?: LikeWhereInput
-    none?: LikeWhereInput
   }
 
   export type BookmarkListRelationFilter = {
@@ -7187,15 +5551,11 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type PostMediaOrderByRelationAggregateInput = {
+  export type LikeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type CommentOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type LikeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7207,50 +5567,30 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     caption?: SortOrder
+    location?: SortOrder
     mediaPath?: SortOrder
     mediaType?: SortOrder
-    location?: SortOrder
-    commentsEnabled?: SortOrder
-    likesEnabled?: SortOrder
-    likesCount?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PostAvgOrderByAggregateInput = {
-    likesCount?: SortOrder
   }
 
   export type PostMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     caption?: SortOrder
+    location?: SortOrder
     mediaPath?: SortOrder
     mediaType?: SortOrder
-    location?: SortOrder
-    commentsEnabled?: SortOrder
-    likesEnabled?: SortOrder
-    likesCount?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type PostMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     caption?: SortOrder
+    location?: SortOrder
     mediaPath?: SortOrder
     mediaType?: SortOrder
-    location?: SortOrder
-    commentsEnabled?: SortOrder
-    likesEnabled?: SortOrder
-    likesCount?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PostSumOrderByAggregateInput = {
-    likesCount?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7289,30 +5629,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7327,124 +5643,9 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type PostRelationFilter = {
     is?: PostWhereInput
     isNot?: PostWhereInput
-  }
-
-  export type PostMediaCountOrderByAggregateInput = {
-    id?: SortOrder
-    postId?: SortOrder
-    type?: SortOrder
-    path?: SortOrder
-    thumbnailPath?: SortOrder
-    mimeType?: SortOrder
-    size?: SortOrder
-    width?: SortOrder
-    height?: SortOrder
-    duration?: SortOrder
-    position?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PostMediaAvgOrderByAggregateInput = {
-    size?: SortOrder
-    width?: SortOrder
-    height?: SortOrder
-    duration?: SortOrder
-    position?: SortOrder
-  }
-
-  export type PostMediaMaxOrderByAggregateInput = {
-    id?: SortOrder
-    postId?: SortOrder
-    type?: SortOrder
-    path?: SortOrder
-    thumbnailPath?: SortOrder
-    mimeType?: SortOrder
-    size?: SortOrder
-    width?: SortOrder
-    height?: SortOrder
-    duration?: SortOrder
-    position?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PostMediaMinOrderByAggregateInput = {
-    id?: SortOrder
-    postId?: SortOrder
-    type?: SortOrder
-    path?: SortOrder
-    thumbnailPath?: SortOrder
-    mimeType?: SortOrder
-    size?: SortOrder
-    width?: SortOrder
-    height?: SortOrder
-    duration?: SortOrder
-    position?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PostMediaSumOrderByAggregateInput = {
-    size?: SortOrder
-    width?: SortOrder
-    height?: SortOrder
-    duration?: SortOrder
-    position?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type CommentCountOrderByAggregateInput = {
@@ -7477,21 +5678,18 @@ export namespace Prisma {
   }
 
   export type LikeCountOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type LikeMaxOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type LikeMinOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -7503,38 +5701,21 @@ export namespace Prisma {
   }
 
   export type BookmarkCountOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type BookmarkMaxOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type BookmarkMinOrderByAggregateInput = {
-    id?: SortOrder
     postId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type PostMediaCreateNestedManyWithoutPostInput = {
-    create?: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput> | PostMediaCreateWithoutPostInput[] | PostMediaUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: PostMediaCreateOrConnectWithoutPostInput | PostMediaCreateOrConnectWithoutPostInput[]
-    createMany?: PostMediaCreateManyPostInputEnvelope
-    connect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-  }
-
-  export type CommentCreateNestedManyWithoutPostInput = {
-    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
-    createMany?: CommentCreateManyPostInputEnvelope
-    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
   export type LikeCreateNestedManyWithoutPostInput = {
@@ -7544,6 +5725,13 @@ export namespace Prisma {
     connect?: LikeWhereUniqueInput | LikeWhereUniqueInput[]
   }
 
+  export type CommentCreateNestedManyWithoutPostInput = {
+    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
+    createMany?: CommentCreateManyPostInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
   export type BookmarkCreateNestedManyWithoutPostInput = {
     create?: XOR<BookmarkCreateWithoutPostInput, BookmarkUncheckedCreateWithoutPostInput> | BookmarkCreateWithoutPostInput[] | BookmarkUncheckedCreateWithoutPostInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutPostInput | BookmarkCreateOrConnectWithoutPostInput[]
@@ -7551,11 +5739,11 @@ export namespace Prisma {
     connect?: BookmarkWhereUniqueInput | BookmarkWhereUniqueInput[]
   }
 
-  export type PostMediaUncheckedCreateNestedManyWithoutPostInput = {
-    create?: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput> | PostMediaCreateWithoutPostInput[] | PostMediaUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: PostMediaCreateOrConnectWithoutPostInput | PostMediaCreateOrConnectWithoutPostInput[]
-    createMany?: PostMediaCreateManyPostInputEnvelope
-    connect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
+  export type LikeUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput> | LikeCreateWithoutPostInput[] | LikeUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: LikeCreateOrConnectWithoutPostInput | LikeCreateOrConnectWithoutPostInput[]
+    createMany?: LikeCreateManyPostInputEnvelope
+    connect?: LikeWhereUniqueInput | LikeWhereUniqueInput[]
   }
 
   export type CommentUncheckedCreateNestedManyWithoutPostInput = {
@@ -7563,13 +5751,6 @@ export namespace Prisma {
     connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
     createMany?: CommentCreateManyPostInputEnvelope
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-  }
-
-  export type LikeUncheckedCreateNestedManyWithoutPostInput = {
-    create?: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput> | LikeCreateWithoutPostInput[] | LikeUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: LikeCreateOrConnectWithoutPostInput | LikeCreateOrConnectWithoutPostInput[]
-    createMany?: LikeCreateManyPostInputEnvelope
-    connect?: LikeWhereUniqueInput | LikeWhereUniqueInput[]
   }
 
   export type BookmarkUncheckedCreateNestedManyWithoutPostInput = {
@@ -7587,48 +5768,8 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type PostMediaUpdateManyWithoutPostNestedInput = {
-    create?: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput> | PostMediaCreateWithoutPostInput[] | PostMediaUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: PostMediaCreateOrConnectWithoutPostInput | PostMediaCreateOrConnectWithoutPostInput[]
-    upsert?: PostMediaUpsertWithWhereUniqueWithoutPostInput | PostMediaUpsertWithWhereUniqueWithoutPostInput[]
-    createMany?: PostMediaCreateManyPostInputEnvelope
-    set?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    disconnect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    delete?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    connect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    update?: PostMediaUpdateWithWhereUniqueWithoutPostInput | PostMediaUpdateWithWhereUniqueWithoutPostInput[]
-    updateMany?: PostMediaUpdateManyWithWhereWithoutPostInput | PostMediaUpdateManyWithWhereWithoutPostInput[]
-    deleteMany?: PostMediaScalarWhereInput | PostMediaScalarWhereInput[]
-  }
-
-  export type CommentUpdateManyWithoutPostNestedInput = {
-    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
-    upsert?: CommentUpsertWithWhereUniqueWithoutPostInput | CommentUpsertWithWhereUniqueWithoutPostInput[]
-    createMany?: CommentCreateManyPostInputEnvelope
-    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    update?: CommentUpdateWithWhereUniqueWithoutPostInput | CommentUpdateWithWhereUniqueWithoutPostInput[]
-    updateMany?: CommentUpdateManyWithWhereWithoutPostInput | CommentUpdateManyWithWhereWithoutPostInput[]
-    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
   export type LikeUpdateManyWithoutPostNestedInput = {
@@ -7645,6 +5786,20 @@ export namespace Prisma {
     deleteMany?: LikeScalarWhereInput | LikeScalarWhereInput[]
   }
 
+  export type CommentUpdateManyWithoutPostNestedInput = {
+    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutPostInput | CommentUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: CommentCreateManyPostInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutPostInput | CommentUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutPostInput | CommentUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
   export type BookmarkUpdateManyWithoutPostNestedInput = {
     create?: XOR<BookmarkCreateWithoutPostInput, BookmarkUncheckedCreateWithoutPostInput> | BookmarkCreateWithoutPostInput[] | BookmarkUncheckedCreateWithoutPostInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutPostInput | BookmarkCreateOrConnectWithoutPostInput[]
@@ -7657,34 +5812,6 @@ export namespace Prisma {
     update?: BookmarkUpdateWithWhereUniqueWithoutPostInput | BookmarkUpdateWithWhereUniqueWithoutPostInput[]
     updateMany?: BookmarkUpdateManyWithWhereWithoutPostInput | BookmarkUpdateManyWithWhereWithoutPostInput[]
     deleteMany?: BookmarkScalarWhereInput | BookmarkScalarWhereInput[]
-  }
-
-  export type PostMediaUncheckedUpdateManyWithoutPostNestedInput = {
-    create?: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput> | PostMediaCreateWithoutPostInput[] | PostMediaUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: PostMediaCreateOrConnectWithoutPostInput | PostMediaCreateOrConnectWithoutPostInput[]
-    upsert?: PostMediaUpsertWithWhereUniqueWithoutPostInput | PostMediaUpsertWithWhereUniqueWithoutPostInput[]
-    createMany?: PostMediaCreateManyPostInputEnvelope
-    set?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    disconnect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    delete?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    connect?: PostMediaWhereUniqueInput | PostMediaWhereUniqueInput[]
-    update?: PostMediaUpdateWithWhereUniqueWithoutPostInput | PostMediaUpdateWithWhereUniqueWithoutPostInput[]
-    updateMany?: PostMediaUpdateManyWithWhereWithoutPostInput | PostMediaUpdateManyWithWhereWithoutPostInput[]
-    deleteMany?: PostMediaScalarWhereInput | PostMediaScalarWhereInput[]
-  }
-
-  export type CommentUncheckedUpdateManyWithoutPostNestedInput = {
-    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
-    upsert?: CommentUpsertWithWhereUniqueWithoutPostInput | CommentUpsertWithWhereUniqueWithoutPostInput[]
-    createMany?: CommentCreateManyPostInputEnvelope
-    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-    update?: CommentUpdateWithWhereUniqueWithoutPostInput | CommentUpdateWithWhereUniqueWithoutPostInput[]
-    updateMany?: CommentUpdateManyWithWhereWithoutPostInput | CommentUpdateManyWithWhereWithoutPostInput[]
-    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
   export type LikeUncheckedUpdateManyWithoutPostNestedInput = {
@@ -7701,6 +5828,20 @@ export namespace Prisma {
     deleteMany?: LikeScalarWhereInput | LikeScalarWhereInput[]
   }
 
+  export type CommentUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutPostInput | CommentUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: CommentCreateManyPostInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutPostInput | CommentUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutPostInput | CommentUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
   export type BookmarkUncheckedUpdateManyWithoutPostNestedInput = {
     create?: XOR<BookmarkCreateWithoutPostInput, BookmarkUncheckedCreateWithoutPostInput> | BookmarkCreateWithoutPostInput[] | BookmarkUncheckedCreateWithoutPostInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutPostInput | BookmarkCreateOrConnectWithoutPostInput[]
@@ -7713,36 +5854,6 @@ export namespace Prisma {
     update?: BookmarkUpdateWithWhereUniqueWithoutPostInput | BookmarkUpdateWithWhereUniqueWithoutPostInput[]
     updateMany?: BookmarkUpdateManyWithWhereWithoutPostInput | BookmarkUpdateManyWithWhereWithoutPostInput[]
     deleteMany?: BookmarkScalarWhereInput | BookmarkScalarWhereInput[]
-  }
-
-  export type PostCreateNestedOneWithoutMediaInput = {
-    create?: XOR<PostCreateWithoutMediaInput, PostUncheckedCreateWithoutMediaInput>
-    connectOrCreate?: PostCreateOrConnectWithoutMediaInput
-    connect?: PostWhereUniqueInput
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type PostUpdateOneRequiredWithoutMediaNestedInput = {
-    create?: XOR<PostCreateWithoutMediaInput, PostUncheckedCreateWithoutMediaInput>
-    connectOrCreate?: PostCreateOrConnectWithoutMediaInput
-    upsert?: PostUpsertWithoutMediaInput
-    connect?: PostWhereUniqueInput
-    update?: XOR<XOR<PostUpdateToOneWithWhereWithoutMediaInput, PostUpdateWithoutMediaInput>, PostUncheckedUpdateWithoutMediaInput>
   }
 
   export type PostCreateNestedOneWithoutCommentsInput = {
@@ -7815,22 +5926,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7857,6 +5952,17 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -7887,41 +5993,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7936,84 +6007,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
-  export type PostMediaCreateWithoutPostInput = {
-    id?: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
+  export type LikeCreateWithoutPostInput = {
+    userId: string
     createdAt?: Date | string
   }
 
-  export type PostMediaUncheckedCreateWithoutPostInput = {
-    id?: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
+  export type LikeUncheckedCreateWithoutPostInput = {
+    userId: string
     createdAt?: Date | string
   }
 
-  export type PostMediaCreateOrConnectWithoutPostInput = {
-    where: PostMediaWhereUniqueInput
-    create: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput>
+  export type LikeCreateOrConnectWithoutPostInput = {
+    where: LikeWhereUniqueInput
+    create: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput>
   }
 
-  export type PostMediaCreateManyPostInputEnvelope = {
-    data: PostMediaCreateManyPostInput | PostMediaCreateManyPostInput[]
+  export type LikeCreateManyPostInputEnvelope = {
+    data: LikeCreateManyPostInput | LikeCreateManyPostInput[]
     skipDuplicates?: boolean
   }
 
@@ -8041,36 +6051,12 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type LikeCreateWithoutPostInput = {
-    id?: string
-    userId: string
-    createdAt?: Date | string
-  }
-
-  export type LikeUncheckedCreateWithoutPostInput = {
-    id?: string
-    userId: string
-    createdAt?: Date | string
-  }
-
-  export type LikeCreateOrConnectWithoutPostInput = {
-    where: LikeWhereUniqueInput
-    create: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput>
-  }
-
-  export type LikeCreateManyPostInputEnvelope = {
-    data: LikeCreateManyPostInput | LikeCreateManyPostInput[]
-    skipDuplicates?: boolean
-  }
-
   export type BookmarkCreateWithoutPostInput = {
-    id?: string
     userId: string
     createdAt?: Date | string
   }
 
   export type BookmarkUncheckedCreateWithoutPostInput = {
-    id?: string
     userId: string
     createdAt?: Date | string
   }
@@ -8085,38 +6071,29 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type PostMediaUpsertWithWhereUniqueWithoutPostInput = {
-    where: PostMediaWhereUniqueInput
-    update: XOR<PostMediaUpdateWithoutPostInput, PostMediaUncheckedUpdateWithoutPostInput>
-    create: XOR<PostMediaCreateWithoutPostInput, PostMediaUncheckedCreateWithoutPostInput>
+  export type LikeUpsertWithWhereUniqueWithoutPostInput = {
+    where: LikeWhereUniqueInput
+    update: XOR<LikeUpdateWithoutPostInput, LikeUncheckedUpdateWithoutPostInput>
+    create: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput>
   }
 
-  export type PostMediaUpdateWithWhereUniqueWithoutPostInput = {
-    where: PostMediaWhereUniqueInput
-    data: XOR<PostMediaUpdateWithoutPostInput, PostMediaUncheckedUpdateWithoutPostInput>
+  export type LikeUpdateWithWhereUniqueWithoutPostInput = {
+    where: LikeWhereUniqueInput
+    data: XOR<LikeUpdateWithoutPostInput, LikeUncheckedUpdateWithoutPostInput>
   }
 
-  export type PostMediaUpdateManyWithWhereWithoutPostInput = {
-    where: PostMediaScalarWhereInput
-    data: XOR<PostMediaUpdateManyMutationInput, PostMediaUncheckedUpdateManyWithoutPostInput>
+  export type LikeUpdateManyWithWhereWithoutPostInput = {
+    where: LikeScalarWhereInput
+    data: XOR<LikeUpdateManyMutationInput, LikeUncheckedUpdateManyWithoutPostInput>
   }
 
-  export type PostMediaScalarWhereInput = {
-    AND?: PostMediaScalarWhereInput | PostMediaScalarWhereInput[]
-    OR?: PostMediaScalarWhereInput[]
-    NOT?: PostMediaScalarWhereInput | PostMediaScalarWhereInput[]
-    id?: StringFilter<"PostMedia"> | string
-    postId?: StringFilter<"PostMedia"> | string
-    type?: StringFilter<"PostMedia"> | string
-    path?: StringFilter<"PostMedia"> | string
-    thumbnailPath?: StringNullableFilter<"PostMedia"> | string | null
-    mimeType?: StringNullableFilter<"PostMedia"> | string | null
-    size?: IntNullableFilter<"PostMedia"> | number | null
-    width?: IntNullableFilter<"PostMedia"> | number | null
-    height?: IntNullableFilter<"PostMedia"> | number | null
-    duration?: FloatNullableFilter<"PostMedia"> | number | null
-    position?: IntFilter<"PostMedia"> | number
-    createdAt?: DateTimeFilter<"PostMedia"> | Date | string
+  export type LikeScalarWhereInput = {
+    AND?: LikeScalarWhereInput | LikeScalarWhereInput[]
+    OR?: LikeScalarWhereInput[]
+    NOT?: LikeScalarWhereInput | LikeScalarWhereInput[]
+    postId?: StringFilter<"Like"> | string
+    userId?: StringFilter<"Like"> | string
+    createdAt?: DateTimeFilter<"Like"> | Date | string
   }
 
   export type CommentUpsertWithWhereUniqueWithoutPostInput = {
@@ -8146,32 +6123,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Comment"> | Date | string
   }
 
-  export type LikeUpsertWithWhereUniqueWithoutPostInput = {
-    where: LikeWhereUniqueInput
-    update: XOR<LikeUpdateWithoutPostInput, LikeUncheckedUpdateWithoutPostInput>
-    create: XOR<LikeCreateWithoutPostInput, LikeUncheckedCreateWithoutPostInput>
-  }
-
-  export type LikeUpdateWithWhereUniqueWithoutPostInput = {
-    where: LikeWhereUniqueInput
-    data: XOR<LikeUpdateWithoutPostInput, LikeUncheckedUpdateWithoutPostInput>
-  }
-
-  export type LikeUpdateManyWithWhereWithoutPostInput = {
-    where: LikeScalarWhereInput
-    data: XOR<LikeUpdateManyMutationInput, LikeUncheckedUpdateManyWithoutPostInput>
-  }
-
-  export type LikeScalarWhereInput = {
-    AND?: LikeScalarWhereInput | LikeScalarWhereInput[]
-    OR?: LikeScalarWhereInput[]
-    NOT?: LikeScalarWhereInput | LikeScalarWhereInput[]
-    id?: StringFilter<"Like"> | string
-    postId?: StringFilter<"Like"> | string
-    userId?: StringFilter<"Like"> | string
-    createdAt?: DateTimeFilter<"Like"> | Date | string
-  }
-
   export type BookmarkUpsertWithWhereUniqueWithoutPostInput = {
     where: BookmarkWhereUniqueInput
     update: XOR<BookmarkUpdateWithoutPostInput, BookmarkUncheckedUpdateWithoutPostInput>
@@ -8192,109 +6143,19 @@ export namespace Prisma {
     AND?: BookmarkScalarWhereInput | BookmarkScalarWhereInput[]
     OR?: BookmarkScalarWhereInput[]
     NOT?: BookmarkScalarWhereInput | BookmarkScalarWhereInput[]
-    id?: StringFilter<"Bookmark"> | string
     postId?: StringFilter<"Bookmark"> | string
     userId?: StringFilter<"Bookmark"> | string
     createdAt?: DateTimeFilter<"Bookmark"> | Date | string
-  }
-
-  export type PostCreateWithoutMediaInput = {
-    id?: string
-    userId: string
-    caption?: string | null
-    mediaPath?: string
-    mediaType?: string
-    location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    comments?: CommentCreateNestedManyWithoutPostInput
-    likes?: LikeCreateNestedManyWithoutPostInput
-    bookmarks?: BookmarkCreateNestedManyWithoutPostInput
-  }
-
-  export type PostUncheckedCreateWithoutMediaInput = {
-    id?: string
-    userId: string
-    caption?: string | null
-    mediaPath?: string
-    mediaType?: string
-    location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-    likes?: LikeUncheckedCreateNestedManyWithoutPostInput
-    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutPostInput
-  }
-
-  export type PostCreateOrConnectWithoutMediaInput = {
-    where: PostWhereUniqueInput
-    create: XOR<PostCreateWithoutMediaInput, PostUncheckedCreateWithoutMediaInput>
-  }
-
-  export type PostUpsertWithoutMediaInput = {
-    update: XOR<PostUpdateWithoutMediaInput, PostUncheckedUpdateWithoutMediaInput>
-    create: XOR<PostCreateWithoutMediaInput, PostUncheckedCreateWithoutMediaInput>
-    where?: PostWhereInput
-  }
-
-  export type PostUpdateToOneWithWhereWithoutMediaInput = {
-    where?: PostWhereInput
-    data: XOR<PostUpdateWithoutMediaInput, PostUncheckedUpdateWithoutMediaInput>
-  }
-
-  export type PostUpdateWithoutMediaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    caption?: NullableStringFieldUpdateOperationsInput | string | null
-    mediaPath?: StringFieldUpdateOperationsInput | string
-    mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUpdateManyWithoutPostNestedInput
-    likes?: LikeUpdateManyWithoutPostNestedInput
-    bookmarks?: BookmarkUpdateManyWithoutPostNestedInput
-  }
-
-  export type PostUncheckedUpdateWithoutMediaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    caption?: NullableStringFieldUpdateOperationsInput | string | null
-    mediaPath?: StringFieldUpdateOperationsInput | string
-    mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
-    likes?: LikeUncheckedUpdateManyWithoutPostNestedInput
-    bookmarks?: BookmarkUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostCreateWithoutCommentsInput = {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaCreateNestedManyWithoutPostInput
     likes?: LikeCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkCreateNestedManyWithoutPostInput
   }
@@ -8303,15 +6164,10 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaUncheckedCreateNestedManyWithoutPostInput
     likes?: LikeUncheckedCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutPostInput
   }
@@ -8336,15 +6192,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUpdateManyWithoutPostNestedInput
     likes?: LikeUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUpdateManyWithoutPostNestedInput
   }
@@ -8353,15 +6204,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUncheckedUpdateManyWithoutPostNestedInput
     likes?: LikeUncheckedUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutPostNestedInput
   }
@@ -8370,15 +6216,10 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaCreateNestedManyWithoutPostInput
     comments?: CommentCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkCreateNestedManyWithoutPostInput
   }
@@ -8387,15 +6228,10 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaUncheckedCreateNestedManyWithoutPostInput
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutPostInput
   }
@@ -8420,15 +6256,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUpdateManyWithoutPostNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUpdateManyWithoutPostNestedInput
   }
@@ -8437,15 +6268,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUncheckedUpdateManyWithoutPostNestedInput
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutPostNestedInput
   }
@@ -8454,34 +6280,24 @@ export namespace Prisma {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaCreateNestedManyWithoutPostInput
-    comments?: CommentCreateNestedManyWithoutPostInput
     likes?: LikeCreateNestedManyWithoutPostInput
+    comments?: CommentCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutBookmarksInput = {
     id?: string
     userId: string
     caption?: string | null
-    mediaPath?: string
-    mediaType?: string
     location?: string | null
-    commentsEnabled?: boolean
-    likesEnabled?: boolean
-    likesCount?: number
+    mediaPath: string
+    mediaType?: string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    media?: PostMediaUncheckedCreateNestedManyWithoutPostInput
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     likes?: LikeUncheckedCreateNestedManyWithoutPostInput
+    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutBookmarksInput = {
@@ -8504,47 +6320,28 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUpdateManyWithoutPostNestedInput
-    comments?: CommentUpdateManyWithoutPostNestedInput
     likes?: LikeUpdateManyWithoutPostNestedInput
+    comments?: CommentUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutBookmarksInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     caption?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
     mediaPath?: StringFieldUpdateOperationsInput | string
     mediaType?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    commentsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesEnabled?: BoolFieldUpdateOperationsInput | boolean
-    likesCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    media?: PostMediaUncheckedUpdateManyWithoutPostNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     likes?: LikeUncheckedUpdateManyWithoutPostNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
   }
 
-  export type PostMediaCreateManyPostInput = {
-    id?: string
-    type?: string
-    path: string
-    thumbnailPath?: string | null
-    mimeType?: string | null
-    size?: number | null
-    width?: number | null
-    height?: number | null
-    duration?: number | null
-    position?: number
+  export type LikeCreateManyPostInput = {
+    userId: string
     createdAt?: Date | string
   }
 
@@ -8555,57 +6352,23 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type LikeCreateManyPostInput = {
-    id?: string
-    userId: string
-    createdAt?: Date | string
-  }
-
   export type BookmarkCreateManyPostInput = {
-    id?: string
     userId: string
     createdAt?: Date | string
   }
 
-  export type PostMediaUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
+  export type LikeUpdateWithoutPostInput = {
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostMediaUncheckedUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
+  export type LikeUncheckedUpdateWithoutPostInput = {
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostMediaUncheckedUpdateManyWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    path?: StringFieldUpdateOperationsInput | string
-    thumbnailPath?: NullableStringFieldUpdateOperationsInput | string | null
-    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    width?: NullableIntFieldUpdateOperationsInput | number | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: NullableFloatFieldUpdateOperationsInput | number | null
-    position?: IntFieldUpdateOperationsInput | number
+  export type LikeUncheckedUpdateManyWithoutPostInput = {
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8630,38 +6393,17 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type LikeUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type LikeUncheckedUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type LikeUncheckedUpdateManyWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type BookmarkUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookmarkUncheckedUpdateWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookmarkUncheckedUpdateManyWithoutPostInput = {
-    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8679,10 +6421,6 @@ export namespace Prisma {
      * @deprecated Use PostDefaultArgs instead
      */
     export type PostArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use PostMediaDefaultArgs instead
-     */
-    export type PostMediaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostMediaDefaultArgs<ExtArgs>
     /**
      * @deprecated Use CommentDefaultArgs instead
      */

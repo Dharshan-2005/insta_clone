@@ -8,7 +8,7 @@ const {
   Public,
   getRuntime,
   skip
-} = require('@prisma/client/runtime/index-browser.js')
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 5.22.0
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "5.22.0"
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -126,28 +126,9 @@ exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   caption: 'caption',
+  location: 'location',
   mediaPath: 'mediaPath',
   mediaType: 'mediaType',
-  location: 'location',
-  commentsEnabled: 'commentsEnabled',
-  likesEnabled: 'likesEnabled',
-  likesCount: 'likesCount',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.PostMediaScalarFieldEnum = {
-  id: 'id',
-  postId: 'postId',
-  type: 'type',
-  path: 'path',
-  thumbnailPath: 'thumbnailPath',
-  mimeType: 'mimeType',
-  size: 'size',
-  width: 'width',
-  height: 'height',
-  duration: 'duration',
-  position: 'position',
   createdAt: 'createdAt'
 };
 
@@ -160,14 +141,12 @@ exports.Prisma.CommentScalarFieldEnum = {
 };
 
 exports.Prisma.LikeScalarFieldEnum = {
-  id: 'id',
   postId: 'postId',
   userId: 'userId',
   createdAt: 'createdAt'
 };
 
 exports.Prisma.BookmarkScalarFieldEnum = {
-  id: 'id',
   postId: 'postId',
   userId: 'userId',
   createdAt: 'createdAt'
@@ -191,7 +170,6 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Post: 'Post',
-  PostMedia: 'PostMedia',
   Comment: 'Comment',
   Like: 'Like',
   Bookmark: 'Bookmark'
